@@ -1,0 +1,42 @@
+{% extends 'basis.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block header %}
+    <p id = 'label_for_nav'>Don't have an account?<br>Then click at the Create button</p>
+    <a class = 'nav_butt' href = '{{ url_for("register") }}' target = '_self'>Create Account</a>
+{% endblock %}
+
+{% block content %}
+    <h1>LOGIN</h1>
+    <form method = 'POST'>
+        {{ form.hidden_tag() }}
+        <div class = 'field_area'>
+            {{ form.username.label }}
+            <br>
+            {{ form.username(class = 'pattern_form') }}
+        </div>
+        <div class = 'field_area'>
+            {{ form.password.label }}
+            <br>
+            {{ form.password(class = 'pattern_form') }}
+        </div>
+        {{ form.submit(class = 'pattern_form', id = 'login_but') }}
+    </form>
+    {% for field in fields %}
+        {% for err in field %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Check it out: </strong> {{ err }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for msg in msgs %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Can't access account: </strong> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    {% endfor %}
+{% endblock %}

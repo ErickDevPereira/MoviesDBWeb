@@ -1,0 +1,65 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Bebas+Neue&family=Caveat:wght@400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Noto+Sans+JP:wght@100..900&family=Pacifico&family=Roboto:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    text-align: center;
+    font-family: robotica, sans-serif;
+}
+
+label {
+    color: white;
+    font-size: 1em;
+}
+
+.field_area {
+    margin-bottom: 15px;
+}
+
+.pattern_form {
+    width: 90%;
+    height: 40px;
+    background-color: rgb(217, 217, 217);
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 30px 30px 30px 30px;
+    font-size: 20px;
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 10px;
+}
+
+#login_but {
+    transition: background-color 1.0s;
+    transition: width 1.0s;
+    background-color: #8ec6ff;
+    text-align: center;
+}
+
+#login_but:hover {
+    background-color: #67b3ff;
+    width: 100%;
+}
+
+#login_but:active {
+    background-color: #168bff;
+    color: white;
+}
+
+form {
+    max-width: 500px;
+    min-width: 400px;
+    margin: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+div#google_but {
+    width: 40px;
+    height: 40px;
+    display: block;
+    background-image: url('https://static.vecteezy.com/system/resources/previews/038/600/575/original/google-logo-icon-set-the-google-icon-searching-icons-free-vector.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+}

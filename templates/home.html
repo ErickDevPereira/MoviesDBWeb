@@ -1,0 +1,11 @@
+{% extends 'basis.html' %}
+{% block title %}
+    Movies DB - Your movies
+{% endblock %}
+{% block header %}
+    <p id = 'label_for_nav'>Want to logout?<br>Then click at the Logout button</p>
+    <a href = '{{ url_for("logout") }}' target = '_self' class = 'nav_butt'>Logout</a>
+{% endblock %}
+{% block content %}
+    {{ session['user_id'] }}
+{% endblock %}

@@ -1,0 +1,31 @@
+h1#pos_title {
+    text-align: center;
+    margin-top: 200px;
+}
+
+#txt_container {
+    margin: auto;
+    text-align: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px 10px 10px 10px;
+    min-width: 400px;
+    max-width: 1200px;
+    margin-top: 20px;
+}
+
+#go_login {
+    width: 100px;
+    height: 40px;
+    border-radius: 10px 10px 10px 10px;
+    border-width: 0px;
+    background-color: rgb(66, 249, 255);
+    transition: background-color 1.0s;
+    color: black;
+    transition: color 1.0s;
+}
+
+#go_login:hover {
+    background-color: rgb(8, 107, 110);
+    color: white;
+}

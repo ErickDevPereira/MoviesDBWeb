@@ -1,0 +1,67 @@
+{% extends "basis.html" %}
+
+{% block title %}
+    Create Account
+{% endblock %}
+
+{% block header %}
+    <p id = 'label_for_nav'>Already have an account?<br>Then click at the Login button</p>
+    <a class = 'nav_butt' href = '{{ url_for("login") }}' target = '_self'>Login</a>
+{% endblock %}
+
+{% block content %}
+    <h1>CREATE ACCOUNT</h1>
+    <form method = 'POST'>
+        {{ form.hidden_tag() }}
+        <div class = 'field_area'>
+            {{ form.username.label }}
+            <br>
+            {{ form.username(class = "pattern_form") }}
+        </div>
+        <div class = 'field_area'>
+            {{ form.password.label }}
+            <br>
+            {{ form.password(class = "pattern_form") }}
+        </div>
+        <div class = 'field_area'>
+            {{ form.conf_password.label }}
+            <br>
+            {{ form.conf_password(class = "pattern_form") }}
+        </div>
+        <div class = 'field_area'>
+            {{ form.email.label }}
+            <br>
+            {{ form.email(class = "pattern_form") }}
+        </div>
+        <div class = 'field_area'>
+            {{ form.phone.label }}
+            <br>
+            {{ form.phone(class = "pattern_form") }}
+        </div>
+        {{ form.submit(id = 'login_but', class = "pattern_form") }}
+        <table style = 'margin: auto; margin-top: 20px; width: 400px;'>
+            <tr>
+                <td style = 'color: white;'>You can register with your Google account:</td>
+                <td style = 'width: 6%;'>
+                    <a href = '{{ url_for("oauth_google") }}' target = '_self'>
+                        <div id = 'google_but'></div>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    {% for field in fields %}
+        {% for err in field %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Check it out: </strong> {{ err }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for msg in msgs %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Invalid Username: </strong> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    {% endfor %}
+{% endblock %}
