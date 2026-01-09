@@ -28,7 +28,14 @@ def success():
     Definition of the endpoint that will allow us to access a success page.
     This page will be accessed after a succesfull registration.
     """
-    return render_template('success.html')
+    if 'password' in session:
+        info = {'username': session['username'], 'email': session['email'], 'password': session['password']}
+        signal = 'Google'
+    else:
+        info = {'username': session['username'], 'email': session['email'], 'phone' : session['phone']}
+        signal = 'Regular'
+    session.clear()
+    return render_template('success.html', signal = signal, info = info)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -96,12 +103,18 @@ def oauth_google():
     if google.authorized:
         response = google.get('/oauth2/v2/userinfo')
         data = response.json()
+        username = data['given_name'] + '_' + data['id']
         DB = conn.my_connection()
-        password = shuffle_str(data['id'])
-        dml.load_user(DB, username = data['given_name'] + '_' + data['id'], password = password, email = data['email'], phone = None)
-        DB.close()
-        session['username'] = data['given_name'] + '_' + data['id']
-        session['email'] = data['email']
-        session['password'] = password
-        return redirect(url_for('success'))
+        if not dql.check_if_user_exists(DB, username):
+            password = shuffle_str(data['id'])
+            dml.load_user(DB, username = username, password = generate_password_hash(password), email = data['email'], phone = None)
+            DB.close()
+            session['username'] = username
+            session['email'] = data['email']
+            session['password'] = password
+            return redirect(url_for('success'))
+        else:
+            flash('The user given throughout Google already exists!')
+            DB.close()
+            return redirect(url_for('login'))
     return redirect(url_for('google.login'))

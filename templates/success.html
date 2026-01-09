@@ -14,18 +14,18 @@
     <div id = txt_container>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <div style = 'text-align: left; width: 400px; margin: auto;'>
-                {% if 'password' in session %}
-                    <strong>Registered Username: </strong> {{ session['username'] }}
+                {% if signal == 'Google' %}
+                    <strong>Registered Username: </strong> {{ info['username'] }}
                     <br>
-                    <strong>Registered Email: </strong> {{ session['email'] }}
+                    <strong>Registered Email: </strong> {{ info['email'] }}
                     <br>
-                    <strong style = 'color: red'>Registered Password: </strong> {{ session['password'] }} (don't loose it)
+                    <strong style = 'color: red'>Registered Password: </strong> {{ info['password'] }} (don't loose it)
                 {% else %}
-                    <strong>Registered Username: </strong> {{ session['username'] }}
+                    <strong>Registered Username: </strong> {{ info['username'] }}
                     <br>
-                    <strong>Registered Email: </strong> {{ session['email'] }}
+                    <strong>Registered Email: </strong> {{ info['email'] }}
                     <br>
-                    <strong>Registered Phone: </strong> {{ session['phone'] }}
+                    <strong>Registered Phone: </strong> {{ info['phone'] }}
                 {% endif %}
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
