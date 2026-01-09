@@ -1,4 +1,4 @@
-from typing import Any, Tuple, List
+from typing import Any, Tuple, List, Dict
 from werkzeug.security import check_password_hash
 
 def validate_user(db: Any, username: str, password: str) -> bool:
@@ -85,6 +85,31 @@ def get_id(db: Any, username: str) -> int:
         cursor.close()
         return id
     return -1
+
+def get_by_id(db: Any, user_id: int) -> Dict[str, str] | None:
+    """
+    Explanation:
+    The inputs are a connection to database and the id of the user. Such function
+    returns information about that user throughout a dictionary.
+
+    Parameters:
+    db: Connection to MySQL
+    user_id: id of a user as integer
+    """
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    username, email, phone
+                FROM
+                   users
+                WHERE
+                    user_id = %s   
+            """, (user_id,))
+    dirt_info = cursor.fetchall()
+    if len(dirt_info) == 0:
+        return None #Case at which the id doesn't exist inside the database
+    info = {'username': dirt_info[0][0], 'email': dirt_info[0][1], 'phone': dirt_info[0][2]}
+    return info
 
 if __name__ == '_main__':
     print(get_id('Erick001'))

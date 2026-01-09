@@ -91,7 +91,9 @@ def home(user_name):
     Definition of the endpoint that will give access to the home page. This is 
     exclusive for each user.
     """
-    return render_template('home.html')
+    DB = conn.my_connection()
+    information = dql.get_by_id(DB, session['user_id'])
+    return render_template('home.html', information = information)
 
 @app.route('/logout')
 def logout():
@@ -107,7 +109,11 @@ def oauth_google():
         DB = conn.my_connection()
         if not dql.check_if_user_exists(DB, username):
             password = shuffle_str(data['id'])
-            dml.load_user(DB, username = username, password = generate_password_hash(password), email = data['email'], phone = None)
+            dml.load_user(DB,
+                        username = username,
+                        password = generate_password_hash(password),
+                        email = data['email'],
+                        phone = None)
             DB.close()
             session['username'] = username
             session['email'] = data['email']

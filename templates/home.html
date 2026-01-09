@@ -9,3 +9,10 @@
 {% block content %}
     {{ session['user_id'] }}
 {% endblock %}
+{% block user_info %}
+Username: {{ information['username'] }}
+<br>
+Email: {{ information['email'] }}
+<br>
+Phone number: {{ information['phone'] }}
+{% endblock %}
