@@ -7,7 +7,14 @@
     <a href = '{{ url_for("logout") }}' target = '_self' class = 'nav_butt'>Logout</a>
 {% endblock %}
 {% block content %}
-    {{ session['user_id'] }}
+    <div class = 'search_movie'>
+        <pre style = 'font-family: roboto, sans-serif; font-size: 1.2em; padding: 0px; margin: 0px;'>Write the title of a movie that you know</pre>
+        {{ form.title(class = 'search_input') }}{{ form.submit(class = 'search_but') }}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px;'>
+            <strong style = 'font-size: 1.2em'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 {% endblock %}
 {% block user_info %}
 Username: {{ information['username'] }}

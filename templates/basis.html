@@ -29,7 +29,11 @@
             </tbody>
         </table>
     </header>
-    <main>
+    {% if session['pre_home'] %}
+    <main id = 'pre_home'>
+    {% else %}
+    <main id = 'pos_home'>
+    {% endif %}
         {% block content %}
         {% endblock %}
     </main>

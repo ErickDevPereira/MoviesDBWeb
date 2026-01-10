@@ -32,3 +32,7 @@ class RegisterForm(FlaskForm):
                                             DataRequired(message = 'Empty phone is invalid')
                                             ])
     submit = SubmitField("Create Account")
+
+class SearchMovieForm(FlaskForm):
+    title = StringField("Write the title of a movie that you know:", validators = [DataRequired(message = 'Empty title is not allowed!')])
+    submit = SubmitField("")

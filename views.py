@@ -42,6 +42,7 @@ def login():
     """
     Definition of the endpoint that will deal with the login page.
     """
+    session['pre_home'] = True
     msgs = get_flashed_messages()
     form = LoginForm()
     if form.validate_on_submit():
@@ -62,6 +63,7 @@ def register():
     """
     Definition of the endpoint that will deal with the registration page.
     """
+    session['pre_home'] = True
     msgs = get_flashed_messages()
     form = RegisterForm()
     if form.validate_on_submit():
@@ -91,9 +93,11 @@ def home(user_name):
     Definition of the endpoint that will give access to the home page. This is 
     exclusive for each user.
     """
+    session['pre_home'] = False
+    form = SearchMovieForm()
     DB = conn.my_connection()
     information = dql.get_by_id(DB, session['user_id'])
-    return render_template('home.html', information = information)
+    return render_template('home.html', information = information, form = form)
 
 @app.route('/logout')
 def logout():
@@ -102,6 +106,7 @@ def logout():
 
 @app.route('/oauth_google')
 def oauth_google():
+    session['pre_home'] = True
     if google.authorized:
         response = google.get('/oauth2/v2/userinfo')
         data = response.json()
