@@ -9,11 +9,34 @@
 {% block content %}
     <div class = 'search_movie'>
         <pre style = 'font-family: roboto, sans-serif; font-size: 1.2em; padding: 0px; margin: 0px;'>Write the title of a movie that you know</pre>
+        <form method = 'POST'>
         {{ form.title(class = 'search_input') }}{{ form.submit(class = 'search_but') }}
+        </form>
         <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px;'>
             <strong style = 'font-size: 1.2em'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        {% for err in form.title.errors %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong style = 'font-size: 1.2em'>Attention: </strong> {{ err }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% if searched_movie == 'None' %}
+            You didn't select a movie yet!
+        {% else %}
+            imdb Id: {{ searched_movie['imdbID'] }}
+            Title : {{ searched_movie['Title'] }}
+            Release date: {{ searched_movie['Released'] }}
+            Time: {{ searched_movie['Runtime'] }} minutes
+            Genre: {{ searched_movie['Genre'] }}
+            Director : {{ searched_movie['Director'] }}
+            Writer: {{ searched_movie['Writer'] }}
+            Actors : {{ searched_movie['Actors'] }}
+            Description : {{ searched_movie['Description'] }}
+            imdbRating : {{ searched_movie['imdbRating'] }}
+            Type : {{ searched_movie['Type'] }}
+        {% endif %}
     </div>
 {% endblock %}
 {% block user_info %}

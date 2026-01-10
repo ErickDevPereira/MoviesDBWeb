@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash
 from functools import wraps
 from flask_dance.contrib.google import google
 from utils import shuffle_str
+from data_handling import get_data_by_title
 
 def login_required(function):
     """
@@ -86,7 +87,7 @@ def register():
     fields = [form.username.errors, form.password.errors, form.conf_password.errors, form.email.errors, form.phone.errors]
     return render_template('register.html', form = form, fields = fields, msgs = msgs)
 
-@app.route('/home/<user_name>')
+@app.route('/home/<user_name>', methods = ['GET', 'POST'])
 @login_required #Only logged user can access this page.
 def home(user_name):
     """
@@ -97,7 +98,11 @@ def home(user_name):
     form = SearchMovieForm()
     DB = conn.my_connection()
     information = dql.get_by_id(DB, session['user_id'])
-    return render_template('home.html', information = information, form = form)
+    searched_movie = 'None'
+    if form.validate_on_submit():
+        searched_movie = get_data_by_title(form.title.data) if get_data_by_title(form.title.data) is not None else 'None'
+    DB.close()
+    return render_template('home.html', information = information, form = form, searched_movie = searched_movie)
 
 @app.route('/logout')
 def logout():

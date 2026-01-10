@@ -1,6 +1,7 @@
 from wtforms import StringField, SubmitField, PasswordField
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, EqualTo, Email, Length
+from wtforms.validators import DataRequired, EqualTo, Email, Length, ValidationError
+from data_handling import get_data_by_title
 
 class LoginForm(FlaskForm):
     username = StringField("Username:", validators = [DataRequired(message = 'Empty username is invalid')])
@@ -36,3 +37,7 @@ class RegisterForm(FlaskForm):
 class SearchMovieForm(FlaskForm):
     title = StringField("Write the title of a movie that you know:", validators = [DataRequired(message = 'Empty title is not allowed!')])
     submit = SubmitField("")
+
+    def validate_title(self, field):
+        if get_data_by_title(field.data) is None:
+            raise ValidationError(f'The movie {field.data} couldn\'t be found. Try again!')
