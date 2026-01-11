@@ -33,6 +33,35 @@ def run_database(password: str, username: str = 'root') -> None:
                    )
                     """)
     cursor.close()
+    cursor: Any = db.cursor()
+    cursor.execute("""
+                CREATE TABLE if not exists Movie_info (
+                    movie_id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    imdb_id VARCHAR(20),
+                    title VARCHAR(255),
+                    type VARCHAR(255),
+                    release_date DATE,
+                    runtime INT,
+                    description VARCHAR(5000),
+                    genre VARCHAR(255),
+                    imdbRating DECIMAL(3,1),
+                    FOREIGN KEY (user_id) REFERENCES Users (user_id),
+                    UNIQUE (user_id, imdb_id)
+                )
+                    """) #User_id is the user that inserted this movie over here
+    cursor.close()
+    cursor: Any = db.cursor()
+    cursor.execute("""
+                CREATE TABLE if not exists Movie_people (
+                    movie_id INT NOT NULL,
+                    actors VARCHAR(128),
+                    director VARCHAR(128),
+                    writer VARCHAR(128),
+                    FOREIGN KEY (movie_id) REFERENCES Movie_info( movie_id )
+                )
+                    """) #This table is an extension of the movie_info table
+    cursor.close()
     try:
         cursor = db.cursor()
         cursor.execute('CREATE INDEX faster_user_verification_index ON Users (username, password)')

@@ -1,0 +1,18 @@
+{% extends 'basis.html' %}
+{% block title %}
+    Not Found
+{% endblock %}
+{% block header %}
+    <p id = 'label_for_nav'><br>You can return to the home page</p>
+    <a href = "{{ url_for('home', user_name = username) }}" target = '_self' class = 'nav_butt'>Return</a>
+{% endblock %}
+{% block content %}
+    <h1>Movie with title "{{ title }}" wasn't found in the system. Try something else.</h1>
+{% endblock %}
+{% block user_info %}
+    Username: {{ information['username'] }}
+    <br>
+    Email: {{ information['email'] }}
+    <br>
+    Phone number: {{ information['phone'] }}
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'basis.html' %}
+{% block title %}
+    {{ complete_data['Title'] }}
+{% endblock %}
+{% block header %}
+    <p id = 'label_for_nav'><br>You can return to the home page</p>
+    <a href = "{{ url_for('home', user_name = username) }}" target = '_self' class = 'nav_butt'>Return</a>
+{% endblock %}
+{% block content %}
+<table>
+    <tr>
+        <td class = 'movie_info'>
+            <div class = 'info_area' id = 'about_the_movie'>
+                <p><strong>imdb Id</strong>: {{ complete_data['imdbID'] }}</p>
+                <p><strong>Title</strong> : {{ complete_data['Title'] }}</p>
+                <p><strong>Type</strong> : {{ complete_data['Type'] }}</p>
+                
+                {% if complete_data['imdbRating'] < 2.0 %}
+                    <p><strong>imdbRating</strong> : {{ complete_data['imdbRating'] }} (Terrible) &#129326;</p>
+                {% elif complete_data['imdbRating'] >= 2.0 and complete_data['imdbRating'] < 4.0%}
+                    <p><strong>imdbRating</strong> : {{ complete_data['imdbRating'] }} (Bad) &#129314;</p>
+                {% elif complete_data['imdbRating'] >= 4.0 and complete_data['imdbRating'] < 6.0 %}
+                    <p><strong>imdbRating</strong> : {{ complete_data['imdbRating'] }} (Not bad) &#129320;</p>
+                {% elif complete_data['imdbRating'] >= 6.0 and complete_data['imdbRating'] < 8.0 %}
+                    <p><strong>imdbRating</strong> : {{ complete_data['imdbRating'] }} (Good) &#128522;</p>
+                {% else %}
+                    <p><strong>imdbRating</strong> : {{ complete_data['imdbRating'] }} (Outstanding) &#128512;</p>
+                {% endif %}
+
+                <p><strong>Release date</strong>: {{ complete_data['Released'] }}</p>
+                <p><strong>Time</strong>: {{ complete_data['Runtime'] }} minutes</p>
+                <p><strong>Genre</strong>: {{ complete_data['Genre'] }}</p>
+            </div>
+            <div class = 'info_area' id = 'description'>
+                <p><strong>Description</strong> : {{ complete_data['Description'] }}</p>
+                <p><strong>Director</strong> : {{ complete_data['Director'] }}</p>
+                <p><strong>Writer</strong>: {{ complete_data['Writer'] }}</p>
+                <p><strong>Actors</strong> : {{ complete_data['Actors'] }}</p>
+            </div>
+        </td>
+        <td class = 'movie_photo'>
+            <div id = "img_movie" style = "background-image : url('{{ img }}');">
+            </div>
+        </td>
+        <td class = 'movie_comments'>
+            <div class = 'comment_section'>
+                <h2 style = 'font-size: 1em;'>
+                    You can comment your thoughts about this movie over here
+                </h2>
+            </div>
+        </td>
+    </tr>
+</table>          
+{% endblock %}
+{% block user_info %}
+    Username: {{ information['username'] }}
+    <br>
+    Email: {{ information['email'] }}
+    <br>
+    Phone number: {{ information['phone'] }}
+{% endblock %}

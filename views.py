@@ -1,5 +1,5 @@
 from main import app
-from flask import render_template, redirect, url_for, session, flash, get_flashed_messages
+from flask import render_template, redirect, url_for, session, flash, get_flashed_messages, request
 from forms import *
 import db.conn as conn
 import db.DML as dml
@@ -98,9 +98,11 @@ def home(user_name):
     form = SearchMovieForm()
     DB = conn.my_connection()
     information = dql.get_by_id(DB, session['user_id'])
-    searched_movie = 'None'
     if form.validate_on_submit():
-        searched_movie = get_data_by_title(form.title.data) if get_data_by_title(form.title.data) is not None else 'None'
+        session["movie"] = get_data_by_title(form.title.data)
+        searched_movie = session["movie"] if session["movie"] is not None else 'None'
+    else:
+        searched_movie = 'None'
     DB.close()
     return render_template('home.html', information = information, form = form, searched_movie = searched_movie)
 
@@ -134,3 +136,41 @@ def oauth_google():
             DB.close()
             return redirect(url_for('login'))
     return redirect(url_for('google.login'))
+
+@app.route('/movie/<title>')
+@login_required
+def movie(title):
+    complete_data = get_data_by_title(title)
+    DB = conn.my_connection()
+    information = dql.get_by_id(DB, session['user_id'])
+    username = f'nickname={information["username"]}'
+    DB.close()
+    
+    if complete_data is None:
+        return render_template('movie_not_found.html', title = title, information = information, username = username)
+
+    img = complete_data['Image']
+
+    return render_template('movie.html', complete_data = complete_data, img = img, information = information, username = username)
+
+@app.route('/movie/add_a_movie')
+@login_required
+def add_movie():
+    DB = conn.my_connection()
+    username = dql.get_by_id(DB, session['user_id'])['username']
+    my_movie = session['movie']
+    dml.load_movie(DB,
+                   imdb_id= my_movie['imdbID'],
+                   user_id = session['user_id'],
+                   title = my_movie['Title'],
+                   release_date = my_movie['Released'],
+                   runtime = my_movie['Runtime'],
+                   genre = my_movie['Genre'],
+                   director = my_movie['Director'],
+                   writer = my_movie['Writer'],
+                   actors = my_movie['Actors'],
+                   description = my_movie['Description'],
+                   imdbRating= my_movie['imdbRating'],
+                   type_ = my_movie['Type'])
+    DB.close()
+    return redirect(url_for('home', user_name = f'nickname={username}'))
