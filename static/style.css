@@ -3,21 +3,24 @@
 
 :root {
     --font: roboto, sans-serif;
-    --col0: #26425e;
-    --col1: #a6ccf2;
-    --col2: #5b8fc4;
-    --col3: #6977a7;
-    --col4: #7a6a9d;
-    --col5: #8c5e94;
-    --col6: #9d528a;
-    --hovered_col_nav : rgb(8, 107, 110);
-    --col_nav : rgb(66, 249, 255);
+    --col0: #213b55;
+    --col1: #15202B;
+    --col2: #021750;
+    --col3: #aaaaaa;
+    --col4: #381d32;
+    --col5: #70a9cc;
+    --col6: #55819c;
+    --col_nav : #1DA1F2;
+    --col_nav_hover : #187cb9;
+    --white_row: #8ed4ff;
+    --dark_row: #5c89a5;
 }
 
 * {
     padding: 0px;
     margin: 0px;
     font-family: var(--font);
+    color: white;
 }
 
 body {
@@ -28,11 +31,14 @@ body {
 
 header {
     padding: 10px;
-    background-color: var(--col0);
+    height: 200px;
+    background-image: linear-gradient(to bottom, #000000, rgba(255, 255, 255, 0)), url('https://wallpapercave.com/wp/wp10615910.jpg');
+    background-position: center;
+    background-size: cover;
 }
 
 main#pre_home {
-    background-image: linear-gradient(45deg, var(--col2), var(--col4));
+    background-image: linear-gradient(135deg, var(--col2), var(--col4));
     padding: 10px;
     max-width: 1000px;
     min-width: 400px;
@@ -44,49 +50,45 @@ main#pre_home {
 }
 
 main#pos_home {
-    background-color: var(--col4);
+    background-color: var(--col0);
     padding: 30px;
     width: 1800px;
     margin: auto;
     margin-bottom: 30px;
-    margin-top: 30px;
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 0px 0px 10px 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
 
 h1 {
-    color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.567);
 }
 
 .nav_butt {
     background-color: var(--col_nav);
     padding: 10px;
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 20px 20px 20px 20px;
     border-width: 0px;
-    color: black;
     text-decoration: none;
     display: block;
     margin-top: 10px;
     width: 130px;
-    transition: color 1.0s;
     transition: background-color 1.0s;
+    color: white;
 }
 
 .nav_butt:hover {
-    background-color: var(--hovered_col_nav);
-    color: white;
+    background-color: var(--col_nav_hover);
 }
 
 p#label_for_nav {
-    color: white;
     text-align: left;
     font-size: 0.8em;
 }
 
 h1#main_title {
-    color: white;
-    font-size: 3em;
+    font-size: 4em;
+    font-weight: bold;
+    text-shadow: 0px 0px 5px white;
 }
 
 table {
@@ -99,14 +101,11 @@ table td {
 
 #left_content {
     padding-left: 20px;
+    padding-top: 30px;
 }
 
 .info_area {
-    background-color: #dcedff;
-    border-radius: 10px 10px 10px 10px;
-    border-style: solid;
-    border-color: var(--col2);
-    border-width: 1px;
+    background-color: var(--col6);
     padding: 10px;
 }
 
@@ -137,11 +136,7 @@ table td {
     margin: auto;
     height: 100%;
     width: 90%;
-    background-color: #dcedff;
-    border-radius: 10px 10px 10px 10px;
-    border-style: solid;
-    border-color: var(--col2);
-    border-width: 1px;
+    background-color: var(--col5);
     padding: 10px;
 }
 
@@ -177,4 +172,73 @@ td.movie_comments {
 
 #add_but:hover {
     background-color: rgb(66, 173, 66);
+}
+
+div.stats_movie {
+    width: 96%;
+    height: 100%;
+    background-color: var(--col5);
+    padding: 20px;
+    margin: auto;
+}
+
+div.table_cont {
+    margin-top: 20px;
+    width: 100%;
+    background-color: var(--col5);
+    padding: 20px;
+}
+
+thead#table_head {
+    background-color: var(--dark_row);
+}
+
+tbody#full_data tr:nth-child(even) {
+    background-color: var(--dark_row);
+}
+
+tbody#full_data tr:nth-child(odd) {
+    background-color: var(--white_row);
+}
+
+tbody#full_data tr:nth-child(odd) > td {
+    color: black;
+}
+
+caption#top_of_table {
+    caption-side: top;
+    background-color: var(--dark_row);
+    border-radius: 10px 10px 0px 0px;
+    color: white;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+tfoot#bottom_of_table {
+    caption-side: top;
+    background-color: var(--dark_row);
+    border-radius: 0px 0px 10px 10px;
+    color: white;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+table#movies_table {
+    border-collapse: collapse;
+    margin: auto;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+div.edit_border {
+    border-color: var(--col_nav_hover);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px 10px 10px 10px;
 }

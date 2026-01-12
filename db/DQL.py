@@ -111,5 +111,36 @@ def get_by_id(db: Any, user_id: int) -> Dict[str, str] | None:
     info = {'username': dirt_info[0][0], 'email': dirt_info[0][1], 'phone': dirt_info[0][2]}
     return info
 
+def get_movies_by_user(db: Any, user_id: int) -> Dict[str, str]:
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    imdb_id, title, release_date, runtime, imdbRating, genre, director
+                FROM
+                    movie_info AS i INNER JOIN movie_people AS p
+                    ON i.movie_id = p.movie_id
+                WHERE
+                    i.user_id = %s
+            """, (user_id,))
+    dataset = cursor.fetchall()
+    cursor.close()
+    """for row in range(0, len(dataset)):
+        for col in range(0, len(dataset[0])):
+            if dataset[row][col] is None:
+                dataset[row][col] = 'Undefined'"""
+    organized_dataset = [
+        {
+        "imdb_id" : dataset[i][0],
+        "title": dataset[i][1],
+        "release_date": dataset[i][2],
+        "runtime": dataset[i][3],
+        "imdbRating": dataset[i][4],
+        "genre": dataset[i][5],
+        "director": dataset[i][6]
+        } for i in range(0, len(dataset))
+    ]
+    return organized_dataset
+
 if __name__ == '_main__':
     print(get_id('Erick001'))

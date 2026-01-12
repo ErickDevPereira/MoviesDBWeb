@@ -7,8 +7,9 @@ import db.DQL as dql
 from werkzeug.security import generate_password_hash
 from functools import wraps
 from flask_dance.contrib.google import google
-from utils import shuffle_str
+from utils import shuffle_str, Status
 from data_handling import get_data_by_title
+import mysql.connector as MySQL
 
 def login_required(function):
     """
@@ -94,17 +95,20 @@ def home(user_name):
     Definition of the endpoint that will give access to the home page. This is 
     exclusive for each user.
     """
+    msg_response = get_flashed_messages()
     session['pre_home'] = False
     form = SearchMovieForm()
     DB = conn.my_connection()
+    all_movies = dql.get_movies_by_user(DB, session['user_id'])
+    number_of_movies = len(all_movies)
     information = dql.get_by_id(DB, session['user_id'])
     if form.validate_on_submit():
         session["movie"] = get_data_by_title(form.title.data)
-        searched_movie = session["movie"] if session["movie"] is not None else 'None'
+        searched_movie = session["movie"]
     else:
         searched_movie = 'None'
     DB.close()
-    return render_template('home.html', information = information, form = form, searched_movie = searched_movie)
+    return render_template('home.html', information = information, form = form, searched_movie = searched_movie, msg_response = msg_response, all_movies = all_movies, number_of_movies = number_of_movies)
 
 @app.route('/logout')
 def logout():
@@ -157,20 +161,30 @@ def movie(title):
 @login_required
 def add_movie():
     DB = conn.my_connection()
-    username = dql.get_by_id(DB, session['user_id'])['username']
-    my_movie = session['movie']
-    dml.load_movie(DB,
-                   imdb_id= my_movie['imdbID'],
-                   user_id = session['user_id'],
-                   title = my_movie['Title'],
-                   release_date = my_movie['Released'],
-                   runtime = my_movie['Runtime'],
-                   genre = my_movie['Genre'],
-                   director = my_movie['Director'],
-                   writer = my_movie['Writer'],
-                   actors = my_movie['Actors'],
-                   description = my_movie['Description'],
-                   imdbRating= my_movie['imdbRating'],
-                   type_ = my_movie['Type'])
-    DB.close()
+    try:
+        username = dql.get_by_id(DB, session['user_id'])['username']
+        my_movie = session['movie']
+        dml.load_movie(DB,
+                    imdb_id= my_movie['imdbID'],
+                    user_id = session['user_id'],
+                    title = my_movie['Title'],
+                    release_date = my_movie['Released'],
+                    runtime = my_movie['Runtime'],
+                    genre = my_movie['Genre'],
+                    director = my_movie['Director'],
+                    writer = my_movie['Writer'],
+                    actors = my_movie['Actors'],
+                    description = my_movie['Description'],
+                    imdbRating= my_movie['imdbRating'],
+                    type_ = my_movie['Type'])
+        flash(f'The movie "{my_movie['Title']}" was added to your list successfully')
+        flash(str(Status.SUCCESS.value)) #This string won't be shown on HTML, but will give a context on the frontend.
+    except MySQL.errors.IntegrityError as err:
+        flash(f'The movie "{my_movie["Title"]}" is already inside your list, so you can\'t insert it again!')
+        flash(str(Status.DUPLICATE.value)) #This string won't be shown on HTML, but will give a context on the frontend.
+    except Exception as err:
+        flash(f"We couldn't add this movie to your list. Try later!ERROR: {err}")
+        flash(str(Status.ERROR.value)) #This string won't be shown on HTML, but will give a context on the frontend.
+    finally:
+        DB.close()
     return redirect(url_for('home', user_name = f'nickname={username}'))

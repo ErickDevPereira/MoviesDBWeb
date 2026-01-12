@@ -7,55 +7,120 @@
     <a href = '{{ url_for("logout") }}' target = '_self' class = 'nav_butt'>Logout</a>
 {% endblock %}
 {% block content %}
-    <div class = 'search_movie'>
-        <pre style = 'font-family: roboto, sans-serif; font-size: 1.2em; padding: 0px; margin: 0px;'>Write the title of a movie that you know</pre>
-        <form method = 'POST'>
-        {{ form.hidden_tag() }}
-        {{ form.title(class = 'search_input') }}{{ form.submit(class = 'search_but') }}
-        </form>
-        <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px; border-color: green;'>
-            <strong style = 'font-size: 1.2em'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% for err in form.title.errors %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong style = 'font-size: 1.2em'>Attention: </strong> {{ err }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    {% if "0" in msg_response or "1" in msg_response or "2" in msg_response %}
+        {% for msg in msg_response %}
+            {% if "0" in msg_response and msg != "0" %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(255, 158, 158); border-color: red;'>
+                    <strong style = 'font-size: 1.2em; color: black;'>&#x274C; Sorry: </strong> {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% elif "1" in msg_response and msg != "1" %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(170, 255, 198); border-color: green;'>
+                    <strong style = 'font-size: 1.2em; color: black;'>&#x2705; Success: </strong> {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% elif "2" in msg_response and msg != "2" %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong style = 'font-size: 1.2em; color: black;'>&#x274C; Attention: </strong> {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
         {% endfor %}
-        {% if searched_movie == 'None' %}
-            You didn't select a movie yet!
-        {% else %}
-            <div class = 'info_area'>
-                <table style = 'margin-bottom: 10px;'>
+    {% endif %}
+    <table>
+        <tr>
+            <td style = 'width: 30%; vertical-align: top;'>
+                <div class = 'search_movie edit_border'>
+                    <pre style = 'font-family: roboto, sans-serif; font-size: 1.2em; padding: 0px; margin: 0px;'>Write the title of a movie that you know</pre>
+                    <form method = 'POST'>
+                    {{ form.hidden_tag() }}
+                    {{ form.title(class = 'search_input') }}{{ form.submit(class = 'search_but') }}
+                    </form>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px; border-color: green;'>
+                        <strong style = 'font-size: 1.2em; color: black;'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% for err in form.title.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong style = 'font-size: 1.2em; color: black;'>Attention: </strong> {{ err }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% if searched_movie == 'None' %}
+                        You didn't select a movie yet!
+                    {% else %}
+                        <div class = 'info_area edit_border'>
+                            <table style = 'margin-bottom: 10px;'>
+                                <tr>
+                                    <td style = 'width: 50%'>
+                                        You can add this movie
+                                    </td>
+                                    <td style = 'width: 8%'>
+                                        <a href = "{{ url_for('add_movie') }}">
+                                            <div id = 'add_but'>
+                                            </div>
+                                        </a>
+                                    </td style = 'width: 42%'>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p><strong>imdb Id</strong>: {{ searched_movie['imdbID'] }}</p>
+                            <p><strong>Title</strong> : {{ searched_movie['Title'] }}</p>
+                            <p><strong>Release date</strong>: {{ searched_movie['Released'] }}</p>
+                            <p><strong>Time</strong>: {{ searched_movie['Runtime'] }} minutes</p>
+                            <p><strong>Genre</strong>: {{ searched_movie['Genre'] }}</p>
+                            <p><strong>Director</strong> : {{ searched_movie['Director'] }}</p>
+                            <p><strong>Writer</strong>: {{ searched_movie['Writer'] }}</p>
+                            <p><strong>Actors</strong> : {{ searched_movie['Actors'] }}</p>
+                            <p><strong>Description</strong> : {{ searched_movie['Description'] }}</p>
+                            <p><strong>imdbRating</strong> : {{ searched_movie['imdbRating'] }}</p>
+                            <p><strong>Type</strong> : {{ searched_movie['Type'] }}</p>
+                            Click <a href = "{{ url_for('movie', title = searched_movie['Title']) }}" target = '_blank'>here</a> to go to the page of {{ searched_movie['Title'] }}
+                        </div>
+                    {% endif %}
+                </div>
+            </td>
+            <td style = 'width: 70%; height: 800px;'>
+                <div class = 'stats_movie edit_border'>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class = 'table_cont edit_border'>
+        <table id = "movies_table">
+            <caption id = 'top_of_table' class = 'edit_border'>
+                All movies registered by {{ information["username"] }}
+            </caption>
+            <thead id = "table_head">
+                <tr>
+                    <th>IMDB Id</th>
+                    <th>Title</th>
+                    <th>Release date</th>
+                    <th>Range of time (min)</th>
+                    <th>IMDB Rating</th>
+                    <th>Genre</th>
+                    <th>Director</th>
+                </tr>
+            </thead>
+            <tbody id = 'full_data'>
+                {% for record in all_movies %}
                     <tr>
-                        <td style = 'width: 50%'>
-                            You can add this movie
-                        </td>
-                        <td style = 'width: 8%'>
-                            <a href = "{{ url_for('add_movie') }}">
-                                <div id = 'add_but'>
-                                </div>
-                            </a>
-                        </td style = 'width: 42%'>
-                        <td>
-                        </td>
+                        <td style = 'width: 8%;'>{{ record['imdb_id'] }}</td>
+                        <td style = 'width: 15%; text-align: left; padding-left: 2%;'>{{ record['title'] }}</td>
+                        <td style = 'width: 8%;'>{{ record['release_date'] }}</td>
+                        <td style = 'width: 10%;'>{{ record['runtime'] }}</td>
+                        <td style = 'width: 10%;'>{{ record['imdbRating'] }}</td>
+                        <td style = 'width: 15%; text-align: left; padding-left: 2%;'>{{ record['genre'] }}</td>
+                        <td style = 'text-align: left; padding-left: 2%;'>{{ record['director'] }}</td>
                     </tr>
-                </table>
-                <p><strong>imdb Id</strong>: {{ searched_movie['imdbID'] }}</p>
-                <p><strong>Title</strong> : {{ searched_movie['Title'] }}</p>
-                <p><strong>Release date</strong>: {{ searched_movie['Released'] }}</p>
-                <p><strong>Time</strong>: {{ searched_movie['Runtime'] }} minutes</p>
-                <p><strong>Genre</strong>: {{ searched_movie['Genre'] }}</p>
-                <p><strong>Director</strong> : {{ searched_movie['Director'] }}</p>
-                <p><strong>Writer</strong>: {{ searched_movie['Writer'] }}</p>
-                <p><strong>Actors</strong> : {{ searched_movie['Actors'] }}</p>
-                <p><strong>Description</strong> : {{ searched_movie['Description'] }}</p>
-                <p><strong>imdbRating</strong> : {{ searched_movie['imdbRating'] }}</p>
-                <p><strong>Type</strong> : {{ searched_movie['Type'] }}</p>
-            </div>
-            Click <a href = "{{ url_for('movie', title = searched_movie['Title']) }}" target = '_blank'>here</a> to go to the page of {{ searched_movie['Title'] }}
-        {% endif %}
+                {% endfor %}
+            </tbody>
+            <tfoot id = 'bottom_of_table'>
+                <td colspan = "2" style = 'text-align: right;'>Total of movies:</td>
+                <td colspan = "5" style = 'text-align: left; padding-left: 5%;'>{{ number_of_movies }}</td>
+            </tfoot>
+        </table>
     </div>
 {% endblock %}
 {% block user_info %}
