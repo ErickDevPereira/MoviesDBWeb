@@ -7,6 +7,27 @@
     <a href = "{{ url_for('home', user_name = username) }}" target = '_self' class = 'nav_butt'>Return</a>
 {% endblock %}
 {% block content %}
+{% for err in form.comment.errors %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(255, 158, 158); border-color: red;'>
+        <strong style = 'font-size: 1.2em; color: black;'>&#x274C; Sorry: </strong> {{ err }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% if user_has_movie %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong style = 'font-size: 1.2em; color: black;'>&#128226; IMPORTANT: </strong> You already have this movie on your list. You can remove it by clicking at the button
+        <a href = '{{ url_for("del_movie", movie_imdb = imdb ) }}' class = 'del_link_but'>DELETE</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% else %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong style = 'font-size: 1.2em; color: black;'>&#128226; IMPORTANT: </strong> You don't have this movie on your list yet. You can add it by clicking at the button
+        <a href = "{{ url_for('add_movie') }}" class = 'add_link_but'>
+           + ADD
+        </a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endif %}
 <table>
     <tr>
         <td class = 'movie_info'>
@@ -47,6 +68,48 @@
                 <h2 style = 'font-size: 1em;'>
                     You can comment your thoughts about this movie over here
                 </h2>
+                <div id = 'comments_placement'>
+                    {% for comment in comments %}
+                        <div class = 'single_comment'>
+                            <table>
+                                <tr>
+                                    <td style = 'font-weight: bold;'>@{{comment['username']}}</td><td style = 'font-size: 0.8em; color: rgb(173, 173, 173);'>Created at {{comment['date']}}</td>
+                                </tr>
+                            </table>
+                            <p style = 'text-indent: 15px;'>{{comment['text']}}</p>
+                            <br>
+                            <p style = 'font-size: 0.8em; color: rgb(173, 173, 173);'>Email: {{comment['email']}}</p>
+                        </div>
+                        <div class = 'votes'>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <a href = '#'>
+                                            <div class = 'up_vote'>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href = '#'>
+                                            <div class = 'down_vote'>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <form method = 'POST'>
+                        {{ form.hidden_tag() }}
+                        {{ form.comment.label }}
+                        <br>
+                        {{ form.comment(class = 'comment_txt_area') }}
+                        <br>
+                        {{ form.submit(class = 'send_comment')}}
+                    </form>
+                </div>
             </div>
         </td>
     </tr>

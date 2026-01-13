@@ -58,9 +58,23 @@ def run_database(password: str, username: str = 'root') -> None:
                     actors VARCHAR(128),
                     director VARCHAR(128),
                     writer VARCHAR(128),
-                    FOREIGN KEY (movie_id) REFERENCES Movie_info( movie_id )
+                    FOREIGN KEY (movie_id) REFERENCES Movie_info ( movie_id )
                 )
                     """) #This table is an extension of the movie_info table
+    cursor.close()
+    cursor: Any = db.cursor()
+    cursor.execute("""
+                CREATE TABLE if not exists Comments (
+                    comment_id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    text VARCHAR(1500) NOT NULL,
+                    imdb_id VARCHAR(20),
+                    date DATETIME DEFAULT NOW(),
+                    likes INT DEFAULT 0,
+                    unlikes INT DEFAULT 0,
+                    FOREIGN KEY ( user_id ) REFERENCES Users ( user_id )
+                )
+                    """)
     cursor.close()
     try:
         cursor = db.cursor()

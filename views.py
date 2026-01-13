@@ -1,5 +1,5 @@
 from main import app
-from flask import render_template, redirect, url_for, session, flash, get_flashed_messages, request
+from flask import render_template, redirect, url_for, session, flash, get_flashed_messages
 from forms import *
 import db.conn as conn
 import db.DML as dml
@@ -108,7 +108,13 @@ def home(user_name):
     else:
         searched_movie = 'None'
     DB.close()
-    return render_template('home.html', information = information, form = form, searched_movie = searched_movie, msg_response = msg_response, all_movies = all_movies, number_of_movies = number_of_movies)
+    return render_template('home.html',
+                            information = information,
+                            form = form,
+                            searched_movie = searched_movie,
+                            msg_response = msg_response,
+                            all_movies = all_movies,
+                            number_of_movies = number_of_movies)
 
 @app.route('/logout')
 def logout():
@@ -141,21 +147,37 @@ def oauth_google():
             return redirect(url_for('login'))
     return redirect(url_for('google.login'))
 
-@app.route('/movie/<title>')
+@app.route('/movie/<title>', methods = ['GET', 'POST'])
 @login_required
 def movie(title):
     complete_data = get_data_by_title(title)
     DB = conn.my_connection()
     information = dql.get_by_id(DB, session['user_id'])
     username = f'nickname={information["username"]}'
-    DB.close()
     
     if complete_data is None:
+        DB.close()
         return render_template('movie_not_found.html', title = title, information = information, username = username)
 
     img = complete_data['Image']
+    user_has_movie = dql.user_has_movie(DB, user_id = session['user_id'], title = title)
+    imdb = complete_data['imdbID']
+    form = CommentForm()
 
-    return render_template('movie.html', complete_data = complete_data, img = img, information = information, username = username)
+    if form.validate_on_submit():
+        dml.load_comment(DB, user_id = session['user_id'], text = form.comment.data, imdb_id = imdb)
+    
+    comments = dql.get_comment_by_imdb(DB, imdb_id = imdb)
+    DB.close()
+    return render_template('movie.html',
+                            complete_data = complete_data,
+                            img = img,
+                            information = information,
+                            username = username,
+                            user_has_movie = user_has_movie,
+                            imdb = imdb,
+                            form = form,
+                            comments = comments)
 
 @app.route('/movie/add_a_movie')
 @login_required
@@ -187,4 +209,16 @@ def add_movie():
         flash(str(Status.ERROR.value)) #This string won't be shown on HTML, but will give a context on the frontend.
     finally:
         DB.close()
+    return redirect(url_for('home', user_name = f'nickname={username}'))
+
+@app.route('/del_movie/<movie_imdb>')
+@login_required
+def del_movie(movie_imdb):
+    DB = conn.my_connection()
+    title = dql.get_title_by_imdb(DB, movie_imdb)
+    flash(f"\"{title}\" was removed successfully!")
+    flash(str(Status.DELETION.value))
+    username = dql.get_by_id(DB, session['user_id'])['username']
+    dml.remove_movie(DB, user_id = session['user_id'], imdb_id = movie_imdb)
+    DB.close()
     return redirect(url_for('home', user_name = f'nickname={username}'))

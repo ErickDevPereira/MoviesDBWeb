@@ -7,14 +7,14 @@
     <a href = '{{ url_for("logout") }}' target = '_self' class = 'nav_butt'>Logout</a>
 {% endblock %}
 {% block content %}
-    {% if "0" in msg_response or "1" in msg_response or "2" in msg_response %}
+    {% if "0" in msg_response or "1" in msg_response or "2" in msg_response or "3" in msg_response %}
         {% for msg in msg_response %}
             {% if "0" in msg_response and msg != "0" %}
                 <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(255, 158, 158); border-color: red;'>
                     <strong style = 'font-size: 1.2em; color: black;'>&#x274C; Sorry: </strong> {{ msg }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            {% elif "1" in msg_response and msg != "1" %}
+            {% elif ("1" in msg_response and msg != "1") or ("3" in msg_response and msg != "3") %}
                 <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(170, 255, 198); border-color: green;'>
                     <strong style = 'font-size: 1.2em; color: black;'>&#x2705; Success: </strong> {{ msg }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -60,7 +60,7 @@
                                             <div id = 'add_but'>
                                             </div>
                                         </a>
-                                    </td style = 'width: 42%'>
+                                    </td>
                                     <td>
                                     </td>
                                 </tr>
@@ -76,7 +76,7 @@
                             <p><strong>Description</strong> : {{ searched_movie['Description'] }}</p>
                             <p><strong>imdbRating</strong> : {{ searched_movie['imdbRating'] }}</p>
                             <p><strong>Type</strong> : {{ searched_movie['Type'] }}</p>
-                            Click <a href = "{{ url_for('movie', title = searched_movie['Title']) }}" target = '_blank'>here</a> to go to the page of {{ searched_movie['Title'] }}
+                            Click <a style = 'color: rgb(0, 195, 255);'href = "{{ url_for('movie', title = searched_movie['Title']) }}" target = '_blank'>here</a> to go to the page of {{ searched_movie['Title'] }}
                         </div>
                     {% endif %}
                 </div>
@@ -100,7 +100,8 @@
                     <th>Range of time (min)</th>
                     <th>IMDB Rating</th>
                     <th>Genre</th>
-                    <th>Director</th>
+                    <th style = 'text-align: left; padding-left: 2%;'>Director</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody id = 'full_data'>
@@ -112,13 +113,14 @@
                         <td style = 'width: 10%;'>{{ record['runtime'] }}</td>
                         <td style = 'width: 10%;'>{{ record['imdbRating'] }}</td>
                         <td style = 'width: 15%; text-align: left; padding-left: 2%;'>{{ record['genre'] }}</td>
-                        <td style = 'text-align: left; padding-left: 2%;'>{{ record['director'] }}</td>
+                        <td style = 'text-align: left; padding-left: 2%; width: 20%;'>{{ record['director'] }}</td>
+                        <td style = 'text-align: left; padding-left: 2%;'><a class = 'del_link_but' style = 'text-decoration: none;' href = '{{ url_for("del_movie", movie_imdb = record["imdb_id"] ) }}'>DELETE</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
             <tfoot id = 'bottom_of_table'>
                 <td colspan = "2" style = 'text-align: right;'>Total of movies:</td>
-                <td colspan = "5" style = 'text-align: left; padding-left: 5%;'>{{ number_of_movies }}</td>
+                <td colspan = "6" style = 'text-align: left; padding-left: 5%;'>{{ number_of_movies }}</td>
             </tfoot>
         </table>
     </div>

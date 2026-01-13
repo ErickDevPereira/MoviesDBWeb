@@ -142,5 +142,51 @@ def get_movies_by_user(db: Any, user_id: int) -> Dict[str, str]:
     ]
     return organized_dataset
 
+def get_title_by_imdb(db: Any, imdb_id: str) -> str | None:
+
+    cursor = db.cursor()
+    cursor.execute("SELECT title FROM movie_info WHERE imdb_id = %s",
+                   (imdb_id,))
+    lst = cursor.fetchall()
+    cursor.close()
+    if len(lst) > 0:
+        title = lst[0][0]
+        return title
+    return None
+
+def user_has_movie(db: Any, title: str, user_id: int) -> bool:
+
+    cursor = db.cursor()
+    cursor.execute("SELECT title FROM movie_info WHERE user_id = %s AND title = %s",
+                   (user_id, title))
+    dataset = cursor.fetchall()
+    cursor.close()
+    return len(dataset) > 0
+
+def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                   u.username,
+                   u.email,
+                   c.date,
+                   c.text
+                FROM
+                    users AS u INNER JOIN comments AS c
+                    ON u.user_id = c.user_id
+                WHERE
+                    c.imdb_id = %s""",
+                (imdb_id,))
+    dataset = cursor.fetchall()
+    cursor.close()
+    organized_dataset = [{
+        "username" : dataset[i][0],
+        "email" : dataset[i][1],
+        "date" : dataset[i][2],
+        "text" : dataset[i][3]
+    } for i in range(len(dataset))]
+    return organized_dataset
+
 if __name__ == '_main__':
     print(get_id('Erick001'))

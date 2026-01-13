@@ -19,6 +19,8 @@
 * {
     text-align: center;
     font-family: robotica, sans-serif;
+    margin: 0px;
+    padding: 0px;
 }
 
 label {
@@ -128,4 +130,28 @@ div.search_movie {
 
 .add_but:hover {
     background-color: rgb(133, 255, 184);
+}
+
+.comment_txt_area {
+    background-color: var(--col1);
+    border-radius: 10px 10px 10px 10px;
+    width: 95%;
+    resize: none;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+}
+
+.send_comment {
+    background-color: var(--col_nav);
+    width: 80px;
+    height: 30px;
+    border-radius: 10px 10px 10px 10px;
+    border-width: 2px;
+    border-color: var(--col2);
+    border-style: solid;
+}
+
+.send_comment:hover {
+    background-color: var(--col_nav_hover);
 }

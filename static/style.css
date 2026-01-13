@@ -14,6 +14,7 @@
     --col_nav_hover : #187cb9;
     --white_row: #8ed4ff;
     --dark_row: #5c89a5;
+    --pattern_red: 
 }
 
 * {
@@ -241,4 +242,104 @@ div.edit_border {
     border-width: 2px;
     border-style: solid;
     border-radius: 10px 10px 10px 10px;
+}
+
+a.add_link_but {
+    text-decoration: none;
+    border-radius: 5px 5px 5px 5px;
+    background-color: rgb(198, 255, 161);
+    font-weight: bold;
+    font-size: 1em;
+    padding: 10px;
+    color: black;
+}
+
+a.add_link_but:hover {
+    background-color: rgb(102, 255, 0);
+}
+
+a.del_link_but {
+    text-decoration: none;
+    color: black;
+    background-color: rgb(255, 76, 76);
+    padding: 5px;
+    border-radius: 5px 5px 5px 5px;
+}
+
+a.del_link_but:hover {
+    text-decoration: none;
+    color: black;
+    background-color: rgb(255, 44, 44);
+    padding: 5px;
+    border-radius: 5px 5px 5px 5px;
+}
+
+tbody#full_data td {
+    height: 40px;
+}
+
+div#comments_placement {
+    height: 360px;;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.single_comment {
+    margin: auto;
+    width: 550px;
+    background-color: var(--col1);
+    border-color: white;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px 10px 10px 10px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+div.single_comment td {
+    text-align: left;
+    margin: 0px;
+}
+
+div.single_comment p {
+    margin: 0px;
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+div.votes {
+    background-color: white;
+    border-radius: 0px 0px 10px 10px;
+    width: 90px;
+    margin-left: 40px;
+    padding: 2px;
+}
+
+div.votes div {
+    width: 30px;
+    height: 30px;
+    background-size: 70% 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+}
+
+div.up_vote {
+    background-image: url('https://www.pinclipart.com/picdir/big/294-2944451_like-button-youtube-png-clipart.png');
+    transition: background-color 0.5s;
+}
+
+div.down_vote {
+    background-image: url('https://icons.iconarchive.com/icons/iconsmind/outline/512/Unlike-2-icon.png');
+    transition: background-color 0.5s;
+}
+
+div.up_vote:hover {
+    background-color: var(--col3);
+}
+
+div.down_vote:hover {
+    background-color: var(--col3);
 }

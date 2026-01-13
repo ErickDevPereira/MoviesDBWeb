@@ -5,6 +5,7 @@ class Status(Enum):
     SUCCESS = 1
     ERROR = 0
     DUPLICATE = 2
+    DELETION = 3
 
 def shuffle_str(s: str) -> str:
     lst = []

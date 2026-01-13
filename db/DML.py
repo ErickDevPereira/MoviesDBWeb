@@ -83,3 +83,37 @@ def load_movie(db: Any,
     )
     db.commit()
     cursor.close()
+
+def remove_movie(db: Any, user_id: int, imdb_id: str) -> None:
+
+    """
+    Explanation:
+    You give the db connection, user_id and the imdb code to the movie, then that movie with that
+    code will be deleted from the account of that given user.
+
+    Parameters:
+    user_id : id of the user that will suffer the operation
+    imdb_id : id of the movie that will be removed.
+    """
+
+    cursor = db.cursor()
+    cursor.execute("SELECT movie_id FROM movie_info WHERE imdb_id = %s AND user_id = %s",
+                   (imdb_id, user_id))
+    movie_id = cursor.fetchall()[0][0]
+    cursor.close()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM movie_people WHERE movie_id = %s", (movie_id,))#Deleting from the extended table
+    db.commit()
+    cursor.close()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM movie_info WHERE movie_id = %s", (movie_id,))#Deleting from the mother table
+    db.commit()
+    cursor.close()
+
+def load_comment(db: Any, user_id: str, imdb_id: str, text: str) -> None:
+
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO Comments (user_id, text, imdb_id) VALUES (%s, %s, %s)",
+                   (user_id, text, imdb_id))
+    db.commit()
+    cursor.close()

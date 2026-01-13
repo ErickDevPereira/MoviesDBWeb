@@ -1,4 +1,4 @@
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, EqualTo, Email, Length, ValidationError
 from data_handling import get_data_by_title
@@ -41,3 +41,7 @@ class SearchMovieForm(FlaskForm):
     def validate_title(self, field):
         if get_data_by_title(field.data) is None:
             raise ValidationError(f'The movie {field.data} couldn\'t be found. Try again!')
+
+class CommentForm(FlaskForm):
+    comment = TextAreaField("Write your comment about this movie:", validators = [DataRequired(message = "The comment must have some text")])
+    submit = SubmitField("SEND")
