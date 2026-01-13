@@ -110,10 +110,39 @@ def remove_movie(db: Any, user_id: int, imdb_id: str) -> None:
     db.commit()
     cursor.close()
 
-def load_comment(db: Any, user_id: str, imdb_id: str, text: str) -> None:
+def load_comment(db: Any, user_id: int, imdb_id: str, text: str) -> None:
 
     cursor = db.cursor()
     cursor.execute("INSERT INTO Comments (user_id, text, imdb_id) VALUES (%s, %s, %s)",
                    (user_id, text, imdb_id))
+    db.commit()
+    cursor.close()
+
+def load_vote_on_db(db: Any, user_id: int, comment_id: int, vote: str) -> None:
+
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO Votes (user_id, comment_id, vote) VALUES (%s, %s, %s) ",
+                   (user_id, comment_id, vote))
+    db.commit()
+    cursor.close()
+
+def update_vote(db: Any, user_id: int, comment_id: int, new_vote: str) -> None:
+
+    cursor = db.cursor()
+    cursor.execute("""
+                    UPDATE
+                        Votes
+                    SET
+                        vote = %s
+                    WHERE
+                        comment_id = %s AND user_id = %s
+                    """, (new_vote, comment_id, user_id))
+    db.commit()
+    cursor.close()
+
+def delete_vote(db: Any, user_id: int, comment_id: int) -> None:
+
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM Votes WHERE comment_id = %s AND user_id = %s", (comment_id, user_id))
     db.commit()
     cursor.close()

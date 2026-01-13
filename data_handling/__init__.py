@@ -1,1 +1,2 @@
 from .API_connection import get_data_by_title
+from .API_connection import get_title_by_imdb_from_api

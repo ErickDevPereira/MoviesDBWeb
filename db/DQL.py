@@ -168,6 +168,7 @@ def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
     cursor = db.cursor()
     cursor.execute("""
                 SELECT
+                   c.comment_id,
                    u.username,
                    u.email,
                    c.date,
@@ -181,12 +182,132 @@ def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
     dataset = cursor.fetchall()
     cursor.close()
     organized_dataset = [{
-        "username" : dataset[i][0],
-        "email" : dataset[i][1],
-        "date" : dataset[i][2],
-        "text" : dataset[i][3]
+        "comment_id": dataset[i][0],
+        "username" : dataset[i][1],
+        "email" : dataset[i][2],
+        "date" : dataset[i][3],
+        "text" : dataset[i][4]
     } for i in range(len(dataset))]
     return organized_dataset
+
+def get_imdb_by_comment(db: Any, comment_id: int) -> str | None:
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    imdb_id
+                FROM
+                    comments
+                WHERE
+                    comment_id = %s
+            """,(comment_id,))
+    data = cursor.fetchall()
+    if len(data) > 0:
+        return data[0][0]
+    return None
+
+def user_has_upvoted(db: Any, comment_id: int, user_id: int) -> bool:
+
+    """
+    Explanation:
+    Given a comment ID and a user ID, the function returns True if
+    that comment has a like from that user, False otherwise.
+    
+    Parameters:
+    db: connection to the database.
+    comment_id: ID of the comment to be analyzed.
+    user_id: ID of the user that possibly liked that comment
+    """
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    vote
+                FROM
+                    comments AS c INNER JOIN votes AS v
+                    ON c.comment_id = v.comment_id
+                WHERE
+                    c.comment_id = %s AND v.user_id = %s
+                """,
+                (comment_id, user_id))
+    data = cursor.fetchall()
+    cursor.close()
+
+    if len(data) == 0:
+        return False #That user didn't voted on the comment
+    
+    if data[0][0] == "UP":
+        return True #That user gave a thumb up on the comment.
+    
+    return False
+
+def user_has_downvoted(db: Any, comment_id: int, user_id: int) -> bool:
+
+    """
+    Explanation:
+    Given a comment ID and a user ID, the function returns True if
+    that comment has an unlike from that user, False otherwise.
+    
+    Parameters:
+    db: connection to the database.
+    comment_id: ID of the comment to be analyzed.
+    user_id: ID of the user that possibly liked that comment
+    """
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    vote
+                FROM
+                    comments AS c INNER JOIN votes AS v
+                    ON c.comment_id = v.comment_id
+                WHERE
+                    c.comment_id = %s AND v.user_id = %s
+                """, (comment_id, user_id))
+    data = cursor.fetchall()
+    cursor.close()
+
+    if len(data) == 0:
+        return False #That user didn't voted on the comment
+    
+    if data[0][0] == "DOWN":
+        return True #That user gave a thumb up on the comment.
+    
+    return False
+
+def votes_per_comment(db: Any, comment_id: int, option: int = 1) -> int:
+
+    """
+    Explanation:
+    Given a comment_id, the function returns the number of down_votes if the option is 0, the number of up_votes if the option is 1
+    for that given comment.
+
+    Parameters:
+    db: is the connection to the database.
+    comment_id: id of the comment that will be analized.
+    option: 0 applies the filter over the Down votes while 1 applies that filter over the Up votes.
+    """
+
+    cursor = db.cursor()
+    cursor.execute("""
+                SELECT
+                    COUNT(v.vote)
+                FROM
+                    comments AS c INNER JOIN votes AS v
+                    ON c.comment_id = v.comment_id
+                WHERE
+                    c.comment_id = %s
+                GROUP BY
+                    v.vote
+                HAVING
+                    v.vote = %s
+                """, (comment_id, "UP" if option == 1 else "DOWN"))
+    data = cursor.fetchall()
+    cursor.close()
+    if len(data) == 0:
+        return 0
+    else:
+        return data[0][0]
 
 if __name__ == '_main__':
     print(get_id('Erick001'))

@@ -137,7 +137,7 @@ table td {
     margin: auto;
     height: 100%;
     width: 90%;
-    background-color: var(--col5);
+    background-color: var(--col6);
     padding: 10px;
 }
 
@@ -342,4 +342,9 @@ div.up_vote:hover {
 
 div.down_vote:hover {
     background-color: var(--col3);
+}
+
+a.link_to_vote {
+    text-decoration: none;
+    color: var(--col_nav);
 }

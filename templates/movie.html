@@ -84,15 +84,25 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <a href = '#'>
-                                            <div class = 'up_vote'>
-                                            </div>
+                                        <a href = '{{ url_for("up_vote", comment_id = comment["comment_id"]) }}' class = 'link_to_vote'>{{ comment['up'] }}
+                                            {% if comment['is_up'] %}
+                                                <div class = 'up_vote' style = 'background-color: rgb(194, 194, 194);'>
+                                                </div>
+                                            {% else %}
+                                                <div class = 'up_vote'>
+                                                </div>
+                                            {% endif %}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href = '#'>
-                                            <div class = 'down_vote'>
-                                            </div>
+                                        <a href = '{{ url_for("down_vote", comment_id = comment["comment_id"]) }}' class = 'link_to_vote'>{{ comment['down'] }}
+                                            {% if comment['is_down'] %}
+                                                <div class = 'down_vote' style = 'background-color: rgb(194, 194, 194);'>
+                                                </div>
+                                            {% else %}
+                                                <div class = 'down_vote'>
+                                                </div>
+                                            {% endif %}
                                         </a>
                                     </td>
                                 </tr>

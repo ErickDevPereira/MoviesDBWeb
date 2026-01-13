@@ -44,5 +44,19 @@ def get_data_by_title(title: str) -> None | Dict[str, str | int | None | float]:
         return None #Movie not found, so None is returned
     return None #Response is different from 200, so None is returned.
 
+def get_title_by_imdb_from_api(imdb_id: str) -> None | str:
+    
+    URL: str = 'http://www.omdbapi.com/'
+    key: str = '118afbf0'
+    response: requests.Response = requests.get(URL, params = {'apikey' : key, 'i' : imdb_id})
+
+    if response.status_code == 200:
+        data = response.json()
+        if data['Response'] == "True":
+            if data['Title'] == "N/A":
+                return None
+            return data['Title']
+    return None
+
 if __name__ == '__main__':
-    print(get_data_by_title('Elit Squad'))
+    print(get_title_by_imdb_from_api('tt0974015'))

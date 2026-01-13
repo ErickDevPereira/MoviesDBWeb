@@ -7,8 +7,8 @@ import db.DQL as dql
 from werkzeug.security import generate_password_hash
 from functools import wraps
 from flask_dance.contrib.google import google
-from utils import shuffle_str, Status
-from data_handling import get_data_by_title
+from utils import shuffle_str, Status, Vote
+from data_handling import get_data_by_title, get_title_by_imdb_from_api
 import mysql.connector as MySQL
 
 def login_required(function):
@@ -168,6 +168,13 @@ def movie(title):
         dml.load_comment(DB, user_id = session['user_id'], text = form.comment.data, imdb_id = imdb)
     
     comments = dql.get_comment_by_imdb(DB, imdb_id = imdb)
+
+    for comment in comments:
+        comment['up'] = dql.votes_per_comment(DB, comment_id = comment['comment_id'], option = 1)
+        comment['down'] = dql.votes_per_comment(DB, comment_id = comment['comment_id'], option = 0)
+        comment['is_up'] = dql.user_has_upvoted(DB, comment_id = comment['comment_id'], user_id = session['user_id'])
+        comment['is_down'] = dql.user_has_downvoted(DB, comment_id = comment['comment_id'], user_id = session['user_id'])
+
     DB.close()
     return render_template('movie.html',
                             complete_data = complete_data,
@@ -222,3 +229,35 @@ def del_movie(movie_imdb):
     dml.remove_movie(DB, user_id = session['user_id'], imdb_id = movie_imdb)
     DB.close()
     return redirect(url_for('home', user_name = f'nickname={username}'))
+
+@app.route('/up_vote/<comment_id>')
+@login_required
+def up_vote(comment_id):
+    DB = conn.my_connection()
+    try:
+        dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.LIKE.value)
+    except MySQL.IntegrityError:
+        if dql.user_has_downvoted(DB, comment_id = comment_id, user_id = session['user_id']):
+            dml.update_vote(DB, comment_id = comment_id, user_id = session['user_id'], new_vote = Vote.LIKE.value)
+        else:
+            dml.delete_vote(DB, comment_id = comment_id, user_id = session['user_id'])
+    finally:
+        title = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
+        DB.close()
+        return redirect(url_for('movie', title = title))
+
+@app.route('/down_vote/<comment_id>')
+@login_required
+def down_vote(comment_id):
+    DB = conn.my_connection()
+    try:
+        dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.UNLIKE.value)
+    except MySQL.IntegrityError:
+        if dql.user_has_upvoted(DB, comment_id = comment_id, user_id = session['user_id']):
+            dml.update_vote(DB, comment_id = comment_id, user_id = session['user_id'], new_vote = Vote.UNLIKE.value)
+        else:
+            dml.delete_vote(DB, comment_id = comment_id, user_id = session['user_id'])
+    finally:
+        title = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
+        DB.close()
+        return redirect(url_for('movie', title = title))

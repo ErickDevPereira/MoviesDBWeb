@@ -1,2 +1,2 @@
 from .extraUtils import shuffle_str
-from .extraUtils import Status
+from .extraUtils import Status, Vote

@@ -7,6 +7,10 @@ class Status(Enum):
     DUPLICATE = 2
     DELETION = 3
 
+class Vote(Enum):
+    LIKE = "UP"
+    UNLIKE = "DOWN"
+
 def shuffle_str(s: str) -> str:
     lst = []
     for char in s:

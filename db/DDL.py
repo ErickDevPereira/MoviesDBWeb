@@ -70,11 +70,22 @@ def run_database(password: str, username: str = 'root') -> None:
                     text VARCHAR(1500) NOT NULL,
                     imdb_id VARCHAR(20),
                     date DATETIME DEFAULT NOW(),
-                    likes INT DEFAULT 0,
-                    unlikes INT DEFAULT 0,
                     FOREIGN KEY ( user_id ) REFERENCES Users ( user_id )
                 )
                     """)
+    cursor.close()
+    cursor: Any = db.cursor()
+    cursor.execute("""
+                CREATE TABLE if not exists Votes (
+                    vote_id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    comment_id INT NOT NULL,
+                    vote ENUM("UP", "DOWN") NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES Users (user_id),
+                    FOREIGN KEY (comment_id) REFERENCES Comments (comment_id),
+                    UNIQUE (user_id, comment_id)
+                )
+                    """) #User_id is the user that voted and comment_id is the id of the comment at which that vote was applied.
     cursor.close()
     try:
         cursor = db.cursor()
