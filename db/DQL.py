@@ -309,5 +309,79 @@ def votes_per_comment(db: Any, comment_id: int, option: int = 1) -> int:
     else:
         return data[0][0]
 
+def avg_measure(db: Any, user_id: int, option: int = 0) -> None | float:
+
+    """
+    Explanation:
+    If option is 0 the return will be the average rating for the user, but if
+    option is 1, the return will be the average runtime value (minutes) for the given user.
+    If the user doesn't have any movie, the return is None.
+    
+    Parameters:
+    db: connection to database
+    user_id: id of the user
+    option: can be either 0 or 1.
+    """
+
+    if option not in (0, 1):
+        raise ValueError("You can only implement an option that is either 0 or 1, nothing else!")
+
+    victim = "imdbRating" if option == 0 else "runtime"
+
+    cursor = db.cursor()
+    cursor.execute(f"""
+                SELECT
+                    AVG({victim})
+                FROM
+                    movie_info
+                WHERE
+                    user_id = {user_id}
+                """) #There is no risk of SQL injection because the user_id is created by the MySQL and victim variable is defined by the code.
+    data = cursor.fetchall()
+    cursor.close()
+    
+    if len(data) == 0:
+        return None
+    
+    return data[0][0]
+
+def best_something(db: Any, user_id: int, option: int = 0) -> None | float:
+
+    """
+    Explanation:
+    If option is 0 the return will be the longest movie on the user's database aligned with 
+    its runtime in minutes, but if option is 1, the return will be the best movie inside the
+    user's database with its score. If the user doesn't have any movie at all, the return will
+    be None.
+    
+    Parameters:
+    db: connection to database
+    user_id: id of the user
+    option: can be either 0 or 1.
+    """
+
+    if option not in (0, 1):
+        raise ValueError("You can only implement an option that is either 0 or 1, nothing else!")
+    
+    to_be_compared = "runtime" if option == 0 else "imdbRating"
+
+    cursor = db.cursor()
+    cursor.execute(
+                f"""
+                SELECT
+                    title, {to_be_compared}
+                FROM
+                    movie_info
+                WHERE
+                    user_id = {user_id} AND {to_be_compared} = (SELECT MAX({to_be_compared}) FROM movie_info WHERE user_id = {user_id})
+                """)
+    data = cursor.fetchall()
+    cursor.close()
+    
+    if not bool(data):
+        return None
+
+    return {"title": data[0][0], to_be_compared: data[0][1]}
+
 if __name__ == '_main__':
     print(get_id('Erick001'))

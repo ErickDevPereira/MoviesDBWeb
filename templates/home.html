@@ -34,7 +34,7 @@
                     <pre style = 'font-family: roboto, sans-serif; font-size: 1.2em; padding: 0px; margin: 0px;'>Write the title of a movie that you know</pre>
                     <form method = 'POST'>
                     {{ form.hidden_tag() }}
-                    {{ form.title(class = 'search_input') }}{{ form.submit(class = 'search_but') }}
+                    {{ form.title(class = 'search_input input_box_style') }}{{ form.submit(class = 'search_but') }}
                     </form>
                     <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px; border-color: green;'>
                         <strong style = 'font-size: 1.2em; color: black;'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
@@ -49,7 +49,7 @@
                     {% if searched_movie == 'None' %}
                         You didn't select a movie yet!
                     {% else %}
-                        <div class = 'info_area edit_border'>
+                        <div class = 'info_area'>
                             <table style = 'margin-bottom: 10px;'>
                                 <tr>
                                     <td style = 'width: 50%'>
@@ -87,7 +87,6 @@
             </td>
         </tr>
     </table>
-    <div class = 'table_cont edit_border'>
         <table id = "movies_table">
             <caption id = 'top_of_table' class = 'edit_border'>
                 All movies registered by {{ information["username"] }}
@@ -123,7 +122,6 @@
                 <td colspan = "6" style = 'text-align: left; padding-left: 5%;'>{{ number_of_movies }}</td>
             </tfoot>
         </table>
-    </div>
 {% endblock %}
 {% block user_info %}
 Username: {{ information['username'] }}

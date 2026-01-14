@@ -3,18 +3,20 @@
 
 :root {
     --font: roboto, sans-serif;
-    --col0: #213b55;
-    --col1: #15202B;
+    --col0: #223342;
+    --col1: #15202b;
     --col2: #021750;
     --col3: #aaaaaa;
     --col4: #381d32;
     --col5: #70a9cc;
-    --col6: #55819c;
+    --col6: #3a536b;
     --col_nav : #1DA1F2;
     --col_nav_hover : #187cb9;
-    --white_row: #8ed4ff;
-    --dark_row: #5c89a5;
+    --white_row: #8ab4c5;
+    --dark_row: #708da3;
+    --input_color: rgb(37, 37, 37);
 }
+
 
 * {
     text-align: center;
@@ -82,12 +84,12 @@ div#google_but {
 
 div.search_movie {
     width: 100%;
-    background-color: var(--col5);
+    background-color: var(--col6);
     padding: 20px;
 }
 
 .search_but {
-    background-image: url('https://cdn-icons-png.flaticon.com/512/657/657031.png');
+    background-image: url('https://www.pngkey.com/png/full/87-872187_lupa-search-icon-white-png.png');
     width: 60px;
     height: 50px;
     background-position: center;
@@ -96,10 +98,18 @@ div.search_movie {
     border-radius: 0px 10px 10px 0px;
     margin-left: -10px;
     border-style: solid;
-    border-color: black;
-    border-width: 2px;
+    border-color: white;
+    border-width: 1px;
     transition: width 1.0s;
-    background-color: var(--white_row);
+    background-color: var(--col_nav);
+}
+
+.input_box_style {
+    background-color: var(--input_color);
+    border-radius: 10px 10px 10px 10px;
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .search_but:hover {
@@ -109,13 +119,8 @@ div.search_movie {
 .search_input {
     width: 300px;
     height: 50px;
-    border-radius: 10px 0px 0px 10px;
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
     margin-top: 20px;
     color: white;
-    background-color: var(--col3);
     margin-bottom: 20px;
 }
 
@@ -133,13 +138,8 @@ div.search_movie {
 }
 
 .comment_txt_area {
-    background-color: var(--col1);
-    border-radius: 10px 10px 10px 10px;
     width: 95%;
     resize: none;
-    border-style: solid;
-    border-color: white;
-    border-width: 2px;
 }
 
 .send_comment {

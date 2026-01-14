@@ -3,18 +3,18 @@
 
 :root {
     --font: roboto, sans-serif;
-    --col0: #213b55;
-    --col1: #15202B;
+    --col0: #223342;
+    --col1: #15202b;
     --col2: #021750;
     --col3: #aaaaaa;
     --col4: #381d32;
     --col5: #70a9cc;
-    --col6: #55819c;
+    --col6: #3a536b;
     --col_nav : #1DA1F2;
     --col_nav_hover : #187cb9;
-    --white_row: #8ed4ff;
-    --dark_row: #5c89a5;
-    --pattern_red: 
+    --white_row: #bfbfbf;
+    --dark_row: #8899a6;
+    --input_color: rgb(37, 37, 37);
 }
 
 * {
@@ -137,7 +137,7 @@ table td {
     margin: auto;
     height: 100%;
     width: 90%;
-    background-color: var(--col6);
+    background-color: var(--col1);
     padding: 10px;
 }
 
@@ -178,7 +178,7 @@ td.movie_comments {
 div.stats_movie {
     width: 96%;
     height: 100%;
-    background-color: var(--col5);
+    background-color: var(--col6);
     padding: 20px;
     margin: auto;
 }
@@ -186,7 +186,7 @@ div.stats_movie {
 div.table_cont {
     margin-top: 20px;
     width: 100%;
-    background-color: var(--col5);
+    background-color: var(--col6);
     padding: 20px;
 }
 
@@ -235,11 +235,12 @@ table#movies_table {
     border-width: 2px;
     border-style: solid;
     border-color: black;
+    margin-top: 20px;
 }
 
 div.edit_border {
     border-color: var(--col_nav_hover);
-    border-width: 2px;
+    border-width: 1px;
     border-style: solid;
     border-radius: 10px 10px 10px 10px;
 }
@@ -260,15 +261,14 @@ a.add_link_but:hover {
 
 a.del_link_but {
     text-decoration: none;
-    color: black;
-    background-color: rgb(255, 76, 76);
+    color: white;
+    background-color: rgb(211, 100, 100);
     padding: 5px;
     border-radius: 5px 5px 5px 5px;
 }
 
 a.del_link_but:hover {
     text-decoration: none;
-    color: black;
     background-color: rgb(255, 44, 44);
     padding: 5px;
     border-radius: 5px 5px 5px 5px;
@@ -288,10 +288,9 @@ div#comments_placement {
 div.single_comment {
     margin: auto;
     width: 550px;
-    background-color: var(--col1);
-    border-color: white;
+    /*border-color: white;
     border-width: 2px;
-    border-style: solid;
+    border-style: solid;*/
     border-radius: 10px 10px 10px 10px;
     padding: 15px;
     margin-top: 10px;
@@ -310,7 +309,6 @@ div.single_comment p {
 }
 
 div.votes {
-    background-color: white;
     border-radius: 0px 0px 10px 10px;
     width: 90px;
     margin-left: 40px;
@@ -327,12 +325,12 @@ div.votes div {
 }
 
 div.up_vote {
-    background-image: url('https://www.pinclipart.com/picdir/big/294-2944451_like-button-youtube-png-clipart.png');
+    background-image: url('../static/images/thumb-up.png');
     transition: background-color 0.5s;
 }
 
 div.down_vote {
-    background-image: url('https://icons.iconarchive.com/icons/iconsmind/outline/512/Unlike-2-icon.png');
+    background-image: url('../static/images/thumb-down.png');
     transition: background-color 0.5s;
 }
 
@@ -347,4 +345,8 @@ div.down_vote:hover {
 a.link_to_vote {
     text-decoration: none;
     color: var(--col_nav);
+}
+
+.clicked {
+    background-color: rgba(255, 255, 255, 0.404);
 }
