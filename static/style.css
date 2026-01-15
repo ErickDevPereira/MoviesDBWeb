@@ -108,6 +108,7 @@ table td {
 .info_area {
     background-color: var(--col6);
     padding: 10px;
+    padding-top: 50px;
 }
 
 .info_area > p {
@@ -353,7 +354,7 @@ a.link_to_vote {
 
 div.overall_info_area {
     background-color: var(--col0);
-    width: 100%;
+    width: 95%;
     height: 100%;
     padding: 20px;
     border-radius: 10px 10px 10px 10px;
@@ -392,4 +393,21 @@ div.empty_star {
 div#star_pattern {
     background-position: center;
     background-size: cover;
+}
+
+div.single_graph {
+    background-color: var(--col0);
+    width: 95%;
+    height: 48%;
+    padding: 20px;
+    border-radius: 10px 10px 10px 10px;
+}
+
+.graph_edit{
+    background-position : center;
+    background-size: 90% 90%; 
+    background-repeat: no-repeat;
+    width: 400px;
+    height: 300px;
+    margin: auto;
 }

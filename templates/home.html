@@ -81,12 +81,12 @@
                     {% endif %}
                 </div>
             </td>
-            <td style = 'width: 70%; height: 800px;'>
+            <td style = 'width: 70%; height: 950px;'>
                 <div class = 'stats_movie edit_border'>
-                    <table style = 'width: 100%; height: 100%;'>
-                        <tr>
-                            <td style = 'width: 50%; height: 100%;'>
-                                {% if session['show_movies'] %}
+                    {% if session['show_movies'] %}
+                        <table style = 'width: 100%; height: 100%;'>
+                            <tr>
+                                <td style = 'width: 50%; height: 100%;'>
                                     <div class = 'overall_info_area'>
                                         <p><strong>Highest IMDB Score:</strong> {{ stats_data['highest_imdb_rating']["title"] }} with {{ stats_data['highest_imdb_rating']["imdbRating"] }}</p>
                                         <p><strong>Longest movie:</strong> {{ stats_data['highest_runtime']["title"] }} with {{ stats_data['highest_runtime']["runtime"] }} min</p>
@@ -108,19 +108,34 @@
                                         {% else %}
                                             <p><strong>Judgement: </strong> : You have an amazing taste</p>
                                         {% endif %}
-                                        <div style = 'background-image: url("{{ session["path-to-scores-graph"] }}"); background-position : center; background-size: 90% 90%; background-repeat: no-repeat; width: 500px; height: 400px;'>
+                                        <div style = 'background-image: url("{{ session["path-to-scores-graph"] }}"); background-position : center; background-size: 90% 90%; background-repeat: no-repeat; width: 450px; height: 350px;'>
                                         </div>
+                                        <p>
+                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This histogram shows the quantity of movies for each score's interval.
+                                        </p>
                                     </div>
-                                {% else %}
-                                    YOU MUST ADD AT LEAST 5 MOVIES IF YOU WANT TO SEE THE STATISTICS ABOUT YOUR MOVIES!
-                                {% endif %}
-                            </td>
-                            <td style = 'width: 50%; height: 100%;'>
-                                <div style = 'background-image: url("{{ session["path-to-years-graph"] }}"); background-position : center; background-size: 90% 90%; background-repeat: no-repeat; width: 500px; height: 400px;'>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                                </td>
+                                <td style = 'width: 50%; height: 100%;'>
+                                    <div class = 'single_graph' style = 'margin-bottom: 10px;'>
+                                        <div style = 'background-image: url("{{ session["path-to-years-graph"] }}");' class = 'graph_edit'>
+                                        </div>
+                                        <p style = 'text-align: left;'>
+                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This bar graph shows the average imdb rating of movies for each year.
+                                        </p>
+                                    </div>
+                                    <div class = 'single_graph'>
+                                        <div style = 'background-image: url("{{ session["path-to-quanitty-graph"] }}");' class = 'graph_edit'>
+                                        </div>
+                                        <p style = 'text-align: left;'>
+                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This graph shows the quantity of of movies for each year. Each star represents a movie that was registered by the user, so it is a point in the curve.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                {% else %}
+                    YOU MUST ADD AT LEAST 5 MOVIES IF YOU WANT TO SEE THE STATISTICS ABOUT YOUR MOVIES!
+                {% endif %}
                 </div>
             </td>
         </tr>

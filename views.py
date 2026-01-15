@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash
 from functools import wraps
 from flask_dance.contrib.google import google
 from utils import shuffle_str, Status, Vote, translate
-from data_handling import get_data_by_title, get_title_by_imdb_from_api, score_histogram, year_bar
+from data_handling import get_data_by_title, get_title_by_imdb_from_api, score_histogram, year_bar, year_curve
 import mysql.connector as MySQL
 import os
 import math
@@ -142,19 +142,25 @@ def home(user_name):
         if not os.path.exists(user_dir):
             os.mkdir(user_dir)
         
-        #Histogram creation
+        #Creating the histogram
         scores = [all_movies[index]["imdbRating"] for index in range(len(all_movies))]
         PATH_TO_SCORES_GRAPH = user_dir + '/' + f'score_{session['user_id']}'
         score_histogram(score_set = scores, number_of_intervals = math.floor(len(scores)/2), path = PATH_TO_SCORES_GRAPH)
         session['path-to-scores-graph'] = "../" + PATH_TO_SCORES_GRAPH + '.png' #Relative path to the image from the home.html inside template
         
-        #Bar graph creation
+        #Creating the bar graph
         data_grouped_by_year = dql.get_movies_by_year(DB, session['user_id'])
         years = [data["Year"] for data in data_grouped_by_year]
         Avg_score = [data["Avg_score"] for data in data_grouped_by_year]
         PATH_TO_YEARS_GRAPH = user_dir + '/' + f'year_{session['user_id']}'
         year_bar(base = years, response = Avg_score, path = PATH_TO_YEARS_GRAPH)
         session['path-to-years-graph'] = '../' + PATH_TO_YEARS_GRAPH + '.png' #Relative path to the image from the home.html inside template
+
+        #Creating the curve
+        quantity = [data['Quantity'] for data in data_grouped_by_year]
+        PATH_TO_CURVE_GRAPH = user_dir + "/" + f'quantity_{session['user_id']}'
+        year_curve(base = years, response = quantity, path = PATH_TO_CURVE_GRAPH)
+        session['path-to-quanitty-graph'] = '../' + PATH_TO_CURVE_GRAPH + '.png'
 
     DB.close()
     return render_template('home.html',

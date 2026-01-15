@@ -396,7 +396,7 @@ def get_movies_by_year(db: Any, user_id: int) -> Dict[str, str | int] | None:
     cursor: Any = db.cursor()
     cursor.execute("""
                     SELECT
-                        AVG(imdbRating), YEAR(release_date)
+                        AVG(imdbRating), YEAR(release_date), COUNT(*)
                     FROM
                         movie_info
                     WHERE
@@ -412,7 +412,7 @@ def get_movies_by_year(db: Any, user_id: int) -> Dict[str, str | int] | None:
     if not bool(dataset):
         return None
 
-    organized_data: List[Dict[str, int]] = [{"Year" : int(dataset[i][1]), "Avg_score" : dataset[i][0]} for i in range(len(dataset))]
+    organized_data: List[Dict[str, int]] = [{"Year" : int(dataset[i][1]), "Avg_score" : dataset[i][0], "Quantity": dataset[i][2]} for i in range(len(dataset))]
     
     return organized_data
 
