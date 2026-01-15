@@ -350,3 +350,46 @@ a.link_to_vote {
 .clicked {
     background-color: rgba(255, 255, 255, 0.404);
 }
+
+div.overall_info_area {
+    background-color: var(--col0);
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    border-radius: 10px 10px 10px 10px;
+    padding-top: 60px;
+}
+
+div.overall_info_area p {
+    text-align: left;
+    padding-left: 20px;
+}
+
+div.levels {
+    width: 250px;
+    height:40px;
+    margin-bottom: 20px;
+}
+
+div.levels > div {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+
+div.full_star {
+    background-image: url('../static/images/full_star.png');
+}
+
+div.half_star {
+    background-image: url('../static/images/half_star.png');
+}
+
+div.empty_star {
+    background-image: url('../static/images/empty_star.png');
+}
+
+div#star_pattern {
+    background-position: center;
+    background-size: cover;
+}

@@ -7,9 +7,11 @@ import db.DQL as dql
 from werkzeug.security import generate_password_hash
 from functools import wraps
 from flask_dance.contrib.google import google
-from utils import shuffle_str, Status, Vote
-from data_handling import get_data_by_title, get_title_by_imdb_from_api
+from utils import shuffle_str, Status, Vote, translate
+from data_handling import get_data_by_title, get_title_by_imdb_from_api, score_histogram, year_bar
 import mysql.connector as MySQL
+import os
+import math
 
 def login_required(function):
     """
@@ -107,6 +109,53 @@ def home(user_name):
         searched_movie = session["movie"]
     else:
         searched_movie = 'None'
+    stats_data = dict()
+    session['show_movies'] = False #Will be False if the user has less than 5 movies
+    if number_of_movies >= 5:
+        session['show_movies'] = True #Will be True if the user has more than 5 movies
+        stats_data['highest_imdb_rating'] = dql.best_something(DB, user_id = session['user_id'], option = 1)
+        stats_data['highest_runtime'] = dql.best_something(DB, user_id = session['user_id'], option = 0)
+        stats_data['avg_imdb_rating'] = dql.avg_measure(DB, user_id = session['user_id'], option = 0)
+        stats_data['avg_runtime'] = dql.avg_measure(DB, user_id = session['user_id'], option = 1)
+        contexts = [
+                    {"ceil" : 1.0, "sequence" : [0.5, 0.0, 0.0, 0.0, 0.0]},
+                    {"ceil" : 2.0, "sequence" : [1.0, 0.0, 0.0, 0.0, 0.0]},
+                    {"ceil" : 3.0, "sequence" : [1.0, 0.5, 0.0, 0.0, 0.0]},
+                    {"ceil" : 4.0, "sequence" : [1.0, 1.0, 0.0, 0.0, 0.0]},
+                    {"ceil" : 5.0, "sequence" : [1.0, 1.0, 0.5, 0.0, 0.0]},
+                    {"ceil" : 6.0, "sequence" : [1.0, 1.0, 1.0, 0.0, 0.0]},
+                    {"ceil" : 7.0, "sequence" : [1.0, 1.0, 1.0, 0.5, 0.0]},
+                    {"ceil" : 8.0, "sequence" : [1.0, 1.0, 1.0, 1.0, 0.0]},
+                    {"ceil" : 9.0, "sequence" : [1.0, 1.0, 1.0, 1.0, 0.5]},
+                    {"ceil" : 10.0, "sequence": [1.0, 1.0, 1.0, 1.0, 1.0]}
+                    ] #0 represents empty star, 0.5 represents half a star and 1 represents a complete star
+        for context in contexts:
+            if float(stats_data['avg_imdb_rating']) <= context["ceil"]:
+                num_sequence = context["sequence"]
+                trasnlated_sequence = translate(num_sequence)
+                stats_data["stars"] = trasnlated_sequence
+                break
+        users_dir = f'static/users'
+        if not os.path.exists(users_dir):
+            os.mkdir(users_dir)
+        user_dir = users_dir + f"/user_{session["user_id"]}"
+        if not os.path.exists(user_dir):
+            os.mkdir(user_dir)
+        
+        #Histogram creation
+        scores = [all_movies[index]["imdbRating"] for index in range(len(all_movies))]
+        PATH_TO_SCORES_GRAPH = user_dir + '/' + f'score_{session['user_id']}'
+        score_histogram(score_set = scores, number_of_intervals = math.floor(len(scores)/2), path = PATH_TO_SCORES_GRAPH)
+        session['path-to-scores-graph'] = "../" + PATH_TO_SCORES_GRAPH + '.png' #Relative path to the image from the home.html inside template
+        
+        #Bar graph creation
+        data_grouped_by_year = dql.get_movies_by_year(DB, session['user_id'])
+        years = [data["Year"] for data in data_grouped_by_year]
+        Avg_score = [data["Avg_score"] for data in data_grouped_by_year]
+        PATH_TO_YEARS_GRAPH = user_dir + '/' + f'year_{session['user_id']}'
+        year_bar(base = years, response = Avg_score, path = PATH_TO_YEARS_GRAPH)
+        session['path-to-years-graph'] = '../' + PATH_TO_YEARS_GRAPH + '.png' #Relative path to the image from the home.html inside template
+
     DB.close()
     return render_template('home.html',
                             information = information,
@@ -114,7 +163,8 @@ def home(user_name):
                             searched_movie = searched_movie,
                             msg_response = msg_response,
                             all_movies = all_movies,
-                            number_of_movies = number_of_movies)
+                            number_of_movies = number_of_movies,
+                            stats_data = stats_data)
 
 @app.route('/logout')
 def logout():
@@ -236,7 +286,7 @@ def up_vote(comment_id):
     DB = conn.my_connection()
     try:
         dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.LIKE.value)
-    except MySQL.IntegrityError:
+    except MySQL.errors.IntegrityError:
         if dql.user_has_downvoted(DB, comment_id = comment_id, user_id = session['user_id']):
             dml.update_vote(DB, comment_id = comment_id, user_id = session['user_id'], new_vote = Vote.LIKE.value)
         else:
@@ -252,7 +302,7 @@ def down_vote(comment_id):
     DB = conn.my_connection()
     try:
         dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.UNLIKE.value)
-    except MySQL.IntegrityError:
+    except MySQL.errors.IntegrityError:
         if dql.user_has_upvoted(DB, comment_id = comment_id, user_id = session['user_id']):
             dml.update_vote(DB, comment_id = comment_id, user_id = session['user_id'], new_vote = Vote.UNLIKE.value)
         else:

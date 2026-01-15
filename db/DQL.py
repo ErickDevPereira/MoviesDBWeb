@@ -309,7 +309,7 @@ def votes_per_comment(db: Any, comment_id: int, option: int = 1) -> int:
     else:
         return data[0][0]
 
-def avg_measure(db: Any, user_id: int, option: int = 0) -> None | float:
+def avg_measure(db: Any, user_id: int, option: int = 0) -> None | str:
 
     """
     Explanation:
@@ -343,9 +343,9 @@ def avg_measure(db: Any, user_id: int, option: int = 0) -> None | float:
     if len(data) == 0:
         return None
     
-    return data[0][0]
+    return f'{data[0][0]:.1f}'
 
-def best_something(db: Any, user_id: int, option: int = 0) -> None | float:
+def best_something(db: Any, user_id: int, option: int = 0) -> None | Dict[str, float | str]:
 
     """
     Explanation:
@@ -382,6 +382,39 @@ def best_something(db: Any, user_id: int, option: int = 0) -> None | float:
         return None
 
     return {"title": data[0][0], to_be_compared: data[0][1]}
+
+def get_movies_by_year(db: Any, user_id: int) -> Dict[str, str | int] | None:
+    """
+    Explanation:
+    This function returns the average rating of movies by year for a given user.
+    Years with zero movies will be ignored.
+    
+    Parameters:
+    db: connection to database
+    user_id: id of the user that will be analized.
+    """
+    cursor: Any = db.cursor()
+    cursor.execute("""
+                    SELECT
+                        AVG(imdbRating), YEAR(release_date)
+                    FROM
+                        movie_info
+                    WHERE
+                        user_id = %s
+                    GROUP BY
+                        YEAR(release_date)
+                    ORDER BY
+                        YEAR(release_date)
+                    """, (user_id,))
+    dataset: List[Tuple[int, Any]] = cursor.fetchall()
+    cursor.close()
+
+    if not bool(dataset):
+        return None
+
+    organized_data: List[Dict[str, int]] = [{"Year" : int(dataset[i][1]), "Avg_score" : dataset[i][0]} for i in range(len(dataset))]
+    
+    return organized_data
 
 if __name__ == '_main__':
     print(get_id('Erick001'))
