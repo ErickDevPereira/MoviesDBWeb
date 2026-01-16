@@ -2,12 +2,12 @@ from flask import Flask
 from os import urandom, environ
 import db.DDL as ddl
 import utils.IOops as IO
-from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.contrib.google import make_google_blueprint, google, OAuth2ConsumerBlueprint
 
 environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 client_id, client_secret = IO.load_src_google()
-blueprint = make_google_blueprint(
+blueprint: OAuth2ConsumerBlueprint = make_google_blueprint(
     offline = True,
     scope = ['profile', 'email'],
     client_id = client_id,
