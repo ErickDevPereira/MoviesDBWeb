@@ -160,7 +160,7 @@ def home(user_name):
         quantity = [data['Quantity'] for data in data_grouped_by_year]
         PATH_TO_CURVE_GRAPH = user_dir + "/" + f'quantity_{session['user_id']}'
         year_curve(base = years, response = quantity, path = PATH_TO_CURVE_GRAPH)
-        session['path-to-quanitty-graph'] = '../' + PATH_TO_CURVE_GRAPH + '.png'
+        session['path-to-quanitty-graph'] = '../' + PATH_TO_CURVE_GRAPH + '.png' #Relative path to the image from the home.html inside template
 
     DB.close()
     return render_template('home.html',
@@ -222,6 +222,7 @@ def movie(title):
 
     if form.validate_on_submit():
         dml.load_comment(DB, user_id = session['user_id'], text = form.comment.data, imdb_id = imdb)
+        form.comment.data = ''
     
     comments = dql.get_comment_by_imdb(DB, imdb_id = imdb)
 

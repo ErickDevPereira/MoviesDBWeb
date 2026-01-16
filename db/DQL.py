@@ -19,7 +19,7 @@ def validate_user(db: Any, username: str, password: str) -> bool:
                 SELECT
                     username, password
                 FROM
-                    Users
+                    users
                 WHERE
                     username = %s
                 """, (username,))
@@ -76,7 +76,7 @@ def get_id(db: Any, username: str) -> int:
                 SELECT
                     user_id
                 FROM
-                    Users
+                    users
                 WHERE
                     username = %s
             """,

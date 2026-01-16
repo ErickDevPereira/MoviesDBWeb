@@ -9,18 +9,18 @@ def run_database(password: str, username: str = 'root') -> None:
         host = 'localhost'
     )
     cursor: Any = db.cursor()
-    cursor.execute('CREATE DATABASE if not exists MoviesDB')
+    cursor.execute('CREATE DATABASE if not exists moviesdb')
     cursor.close()
     db.close()
     db: Any = conn.connect(
         user = username,
         password = password,
         host = 'localhost',
-        database = 'MoviesDB'
+        database = 'moviesdb'
     )
     cursor: Any = db.cursor()
     cursor.execute("""
-                    CREATE TABLE if not exists Users (
+                    CREATE TABLE if not exists users (
                         user_id INT PRIMARY KEY AUTO_INCREMENT,
                         username VARCHAR(64) NOT NULL UNIQUE,
                         password VARCHAR(1024) NOT NULL,
@@ -35,13 +35,13 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor.close()
     cursor: Any = db.cursor()
     cursor.execute("""
-                CREATE TABLE if not exists Movie_info (
+                CREATE TABLE if not exists movie_info (
                     movie_id INT PRIMARY KEY AUTO_INCREMENT,
                     user_id INT NOT NULL,
                     imdb_id VARCHAR(20),
                     title VARCHAR(255),
                     type VARCHAR(255),
-                    release_date DATE,
+                    release_date DATE NOT NULL,
                     runtime INT,
                     description VARCHAR(5000),
                     genre VARCHAR(255),
@@ -53,7 +53,7 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor.close()
     cursor: Any = db.cursor()
     cursor.execute("""
-                CREATE TABLE if not exists Movie_people (
+                CREATE TABLE if not exists movie_people (
                     movie_id INT NOT NULL,
                     actors VARCHAR(128),
                     director VARCHAR(128),
@@ -64,7 +64,7 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor.close()
     cursor: Any = db.cursor()
     cursor.execute("""
-                CREATE TABLE if not exists Comments (
+                CREATE TABLE if not exists comments (
                     comment_id INT PRIMARY KEY AUTO_INCREMENT,
                     user_id INT NOT NULL,
                     text VARCHAR(1500) NOT NULL,
@@ -76,7 +76,7 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor.close()
     cursor: Any = db.cursor()
     cursor.execute("""
-                CREATE TABLE if not exists Votes (
+                CREATE TABLE if not exists votes (
                     vote_id INT PRIMARY KEY AUTO_INCREMENT,
                     user_id INT NOT NULL,
                     comment_id INT NOT NULL,
@@ -87,16 +87,23 @@ def run_database(password: str, username: str = 'root') -> None:
                 )
                     """) #User_id is the user that voted and comment_id is the id of the comment at which that vote was applied.
     cursor.close()
-    try:
-        cursor = db.cursor()
-        cursor.execute('CREATE INDEX faster_user_verification_index ON Users (username, password)')
-        cursor.close()
-    except conn.errors.ProgrammingError:
-        pass
-    except Exception as err:
-        print(err)
-    finally:
-        db.close()
+    SQLs = [
+            'CREATE INDEX ind1 ON users (username, password)',
+            'CREATE INDEX ind2 ON movie_info (user_id, runtime)',
+            'CREATE INDEX ind3 ON movie_info (user_id, imdbRating)',
+            'CREATE INDEX ind4 ON movie_info (user_id, title)',
+            'CREATE INDEX ind5 ON movie_info (imddb_id)'
+            ] #These indexes will be responsible for speeding up somes queries
+    for sql in SQLs:
+        try:
+            cursor = db.cursor()
+            cursor.execute(sql)
+            cursor.close()
+        except conn.errors.ProgrammingError:
+            pass
+        except Exception as err:
+            print(err)
+    db.close()
 
 if __name__ == '__main__':
     run_database('Ichigo007*')
