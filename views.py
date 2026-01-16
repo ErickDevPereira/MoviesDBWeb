@@ -177,7 +177,7 @@ def logout():
     session.clear() #Cleaning the session of the user. Now the user will be out of the system.
     return redirect(url_for('login'))
 
-@app.route('/oauth_google')
+@app.route('/')
 def oauth_google():
     session['pre_home'] = True
     if google.authorized:
@@ -234,7 +234,7 @@ def movie(title):
     DB.close()
     return render_template('movie.html',
                             complete_data = complete_data,
-                            img = img,
+                            img = img if img is not None else "None",
                             information = information,
                             username = username,
                             user_has_movie = user_has_movie,

@@ -3,17 +3,16 @@
 
 :root {
     --font: roboto, sans-serif;
-    --col0: #223342;
-    --col1: #15202b;
+    --col0: #121a22;
+    --col1: #080b0f;
     --col2: #021750;
     --col3: #aaaaaa;
     --col4: #381d32;
-    --col5: #70a9cc;
-    --col6: #3a536b;
+    --col6: #2d3944;
     --col_nav : #1DA1F2;
     --col_nav_hover : #187cb9;
-    --white_row: #bfbfbf;
-    --dark_row: #8899a6;
+    --white_row: #7e99b4;
+    --dark_row: #536b81;
     --input_color: rgb(37, 37, 37);
 }
 
@@ -45,7 +44,7 @@ main#pre_home {
     min-width: 400px;
     margin: auto;
     margin-bottom: 30px;
-    margin-top: 30px;
+    margin-top: 50px;
     border-radius: 10px 10px 10px 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
@@ -138,7 +137,7 @@ table td {
     margin: auto;
     height: 100%;
     width: 90%;
-    background-color: var(--col1);
+    background-color: var(--col6);
     padding: 10px;
 }
 
@@ -240,9 +239,6 @@ table#movies_table {
 }
 
 div.edit_border {
-    border-color: var(--col_nav_hover);
-    border-width: 1px;
-    border-style: solid;
     border-radius: 10px 10px 10px 10px;
 }
 
@@ -280,7 +276,7 @@ tbody#full_data td {
 }
 
 div#comments_placement {
-    height: 360px;;
+    height: 360px;
     padding: 10px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -353,7 +349,7 @@ a.link_to_vote {
 }
 
 div.overall_info_area {
-    background-color: var(--col0);
+    background-color: var(--col6);
     width: 95%;
     height: 100%;
     padding: 20px;
@@ -396,7 +392,7 @@ div#star_pattern {
 }
 
 div.single_graph {
-    background-color: var(--col0);
+    background-color: var(--col6);
     width: 95%;
     height: 48%;
     padding: 20px;
@@ -410,4 +406,52 @@ div.single_graph {
     width: 400px;
     height: 300px;
     margin: auto;
+}
+
+div#not_enough_data {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.5), black), url('https://wallpapercave.com/wp/wp4714639.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 0px;
+    margin-left: 20px;
+}
+
+div#message {
+    position: absolute;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div#message p {
+    font-family: Helvetica, sans-serif;
+    font-size: 3em;
+    font-weight: bold;
+    text-shadow: 0px 0px 2px white;
+}
+
+div.ERROR_img {
+    position: relative;
+    background-color: var(--col6);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px 10px 10px 10px;
+}
+
+div.not_found {
+    position: absolute;
+    color: white;
+    font-family: Helvetica, sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 100px;
 }

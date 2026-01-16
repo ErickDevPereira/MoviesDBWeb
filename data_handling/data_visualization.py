@@ -34,7 +34,8 @@ def year_bar(base: List[int], response: List[int | float], path: str, color: str
     apply_style(color = border_color)
     plt.xlabel("Year", fontdict = {"family": "monospace", "size": font_size, "color": border_color})
     plt.ylabel("Average score", fontdict = {"family": "monospace", "size": font_size, "color": border_color})
-    plt.bar(base, response, color = color)
+    base_str = [str(element) for element in base]
+    plt.bar(base_str, response, color = color)
     plt.tight_layout()
     plt.savefig(path, dpi = 75, transparent = True)
     plt.clf()

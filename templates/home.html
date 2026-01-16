@@ -82,8 +82,8 @@
                 </div>
             </td>
             <td style = 'width: 70%; height: 950px;'>
-                <div class = 'stats_movie edit_border'>
-                    {% if session['show_movies'] %}
+                {% if session['show_movies'] %}
+                    <div class = 'stats_movie edit_border'>
                         <table style = 'width: 100%; height: 100%;'>
                             <tr>
                                 <td style = 'width: 50%; height: 100%;'>
@@ -133,10 +133,15 @@
                                 </td>
                             </tr>
                         </table>
+                    </div>
                 {% else %}
-                    YOU MUST ADD AT LEAST 5 MOVIES IF YOU WANT TO SEE THE STATISTICS ABOUT YOUR MOVIES!
+                    <div id = 'not_enough_data' class = 'stats_movie edit_border'>
+                        <div id = 'message'>
+                            <p>Add 5 or more movies to unlock your movie statistics!</p>
+                            <p style = 'font-size: 0.8em;'>You can get information about movies of your interest easily</p>
+                        </div>
+                    </div>
                 {% endif %}
-                </div>
             </td>
         </tr>
     </table>

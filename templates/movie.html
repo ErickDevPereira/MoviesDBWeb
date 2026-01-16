@@ -60,8 +60,16 @@
             </div>
         </td>
         <td class = 'movie_photo'>
-            <div id = "img_movie" style = "background-image : url('{{ img }}');">
-            </div>
+            {% if img != "None" %}
+                <div id = "img_movie" style = "background-image : url('{{ img }}');">
+                </div>
+            {% else %}
+                <div id = "ERROR_img">
+                    <div id = 'not_found'>
+                        IMAGE NOT FOUND
+                    </div>
+                </div>
+            {% endif %}
         </td>
         <td class = 'movie_comments'>
             <div class = 'comment_section edit_border'>

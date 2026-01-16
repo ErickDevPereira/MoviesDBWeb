@@ -53,14 +53,14 @@
     {% for field in fields %}
         {% for err in field %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Check it out: </strong> {{ err }}
+                <strong style = 'color: black;'>Check it out: </strong> {{ err }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
     {% endfor %}
     {% for msg in msgs %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Invalid Username: </strong> {{ msg }}
+                <strong style = 'color: black;'>Invalid Username: </strong> {{ msg }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
     {% endfor %}
