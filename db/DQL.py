@@ -14,7 +14,7 @@ def validate_user(db: Any, username: str, password: str) -> bool:
     password: password without cryptograph over it.
     """
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     username, password
@@ -23,7 +23,7 @@ def validate_user(db: Any, username: str, password: str) -> bool:
                 WHERE
                     username = %s
                 """, (username,))
-    get_people = cursor.fetchall()
+    get_people: List[Tuple[str, str]] = cursor.fetchall()
     cursor.close()
     if len(get_people) > 0:
         if check_password_hash(get_people[0][1], password):
@@ -51,7 +51,7 @@ def check_if_user_exists(db: Any, username: str) -> bool:
                 WHERE
                     username = %s
                     """, (username,))
-    data: List[Tuple[str]] = cursor.fetchall()
+    data: List[Tuple[str, ...]] = cursor.fetchall()
     if len(data) > 0:
         return True
     return False
@@ -96,7 +96,7 @@ def get_by_id(db: Any, user_id: int) -> Dict[str, str] | None:
     db: Connection to MySQL
     user_id: id of a user as integer
     """
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     username, email, phone
@@ -105,15 +105,24 @@ def get_by_id(db: Any, user_id: int) -> Dict[str, str] | None:
                 WHERE
                     user_id = %s   
             """, (user_id,))
-    dirt_info = cursor.fetchall()
+    dirt_info: List[Tuple[str, ...]] = cursor.fetchall()
     if len(dirt_info) == 0:
         return None #Case at which the id doesn't exist inside the database
-    info = {'username': dirt_info[0][0], 'email': dirt_info[0][1], 'phone': dirt_info[0][2]}
+    info: Dict[str, str] = {'username': dirt_info[0][0], 'email': dirt_info[0][1], 'phone': dirt_info[0][2]}
     return info
 
-def get_movies_by_user(db: Any, user_id: int) -> Dict[str, str]:
+def get_movies_by_user(db: Any, user_id: int) -> List[Dict[str, str | int | float | None]]:
 
-    cursor = db.cursor()
+    """
+    Explanation:
+    This function returns the data for every movie registered by a given user.
+
+    parameters:
+    db: database connection.
+    user_id: id of the user whose movies will be catched.
+    """
+
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     imdb_id, title, release_date, runtime, imdbRating, genre, director
@@ -123,13 +132,13 @@ def get_movies_by_user(db: Any, user_id: int) -> Dict[str, str]:
                 WHERE
                     i.user_id = %s
             """, (user_id,))
-    dataset = cursor.fetchall()
+    dataset: List[Tuple[str, str, str, int | None, float, str | None, str | None]] = cursor.fetchall()
     cursor.close()
     """for row in range(0, len(dataset)):
         for col in range(0, len(dataset[0])):
             if dataset[row][col] is None:
                 dataset[row][col] = 'Undefined'"""
-    organized_dataset = [
+    organized_dataset: List[Dict[str, str | int | float | None]] = [
         {
         "imdb_id" : dataset[i][0],
         "title": dataset[i][1],
@@ -144,28 +153,58 @@ def get_movies_by_user(db: Any, user_id: int) -> Dict[str, str]:
 
 def get_title_by_imdb(db: Any, imdb_id: str) -> str | None:
 
-    cursor = db.cursor()
+    """
+    Explanation: Given an imdb code, the function will return its original title as string, but it will analyze the database, not an web API.
+    It returns None if that movie is not found on the database.
+
+    Parameters:
+    db: connection to the database.
+    imdb_id: string with the imdb code of a movie.
+    """
+
+    cursor: Any = db.cursor()
     cursor.execute("SELECT title FROM movie_info WHERE imdb_id = %s",
                    (imdb_id,))
-    lst = cursor.fetchall()
+    lst: List[Tuple[str, ...]] = cursor.fetchall()
     cursor.close()
     if len(lst) > 0:
-        title = lst[0][0]
+        title: str = lst[0][0]
         return title
     return None
 
 def user_has_movie(db: Any, title: str, user_id: int) -> bool:
 
-    cursor = db.cursor()
+    """
+    Explanation:
+    This function checks if a given user has a given title inside its dataset, returning
+    True if that movie was added by that user, False otherwise.
+
+    parameters:
+    db: connection to the database
+    title: title of a movie
+    user_id: id of the user that we are checking the existence of the movie inside his/her dataset.
+    """
+
+    cursor: Any = db.cursor()
     cursor.execute("SELECT title FROM movie_info WHERE user_id = %s AND title = %s",
                    (user_id, title))
-    dataset = cursor.fetchall()
+    dataset: List[Tuple[str, ...]] = cursor.fetchall()
     cursor.close()
     return len(dataset) > 0
 
 def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
 
-    cursor = db.cursor()
+    """
+    Explanation:
+    Returns username and email of the users that made a comment over a movie with a given imdb code.
+    It will also return the comment and the posting date of that comment as well.
+
+    parameters:
+    db: connection to the database.
+    imdb_id: id of the movie (the universe that we are working at). 
+    """
+
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                    c.comment_id,
@@ -179,9 +218,9 @@ def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
                 WHERE
                     c.imdb_id = %s""",
                 (imdb_id,))
-    dataset = cursor.fetchall()
+    dataset: List[Tuple[str, ...]] = cursor.fetchall()
     cursor.close()
-    organized_dataset = [{
+    organized_dataset: List[Dict[str, str | int]] = [{
         "comment_id": dataset[i][0],
         "username" : dataset[i][1],
         "email" : dataset[i][2],
@@ -192,7 +231,16 @@ def get_comment_by_imdb(db: Any, imdb_id: str) -> List[Dict[str, str]]:
 
 def get_imdb_by_comment(db: Any, comment_id: int) -> str | None:
 
-    cursor = db.cursor()
+    """
+    Given a the id of a comment, this function returns the imdb code of the movie with such comment but
+    returns None if that id is not present at the table comments.
+
+    parameters:
+    db: connection to the database
+    comment_id: id of the comment
+    """
+
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     imdb_id
@@ -201,7 +249,7 @@ def get_imdb_by_comment(db: Any, comment_id: int) -> str | None:
                 WHERE
                     comment_id = %s
             """,(comment_id,))
-    data = cursor.fetchall()
+    data: List[Tuple[str, ...]] = cursor.fetchall()
     if len(data) > 0:
         return data[0][0]
     return None
@@ -219,7 +267,7 @@ def user_has_upvoted(db: Any, comment_id: int, user_id: int) -> bool:
     user_id: ID of the user that possibly liked that comment
     """
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     vote
@@ -230,7 +278,7 @@ def user_has_upvoted(db: Any, comment_id: int, user_id: int) -> bool:
                     c.comment_id = %s AND v.user_id = %s
                 """,
                 (comment_id, user_id))
-    data = cursor.fetchall()
+    data: List[Tuple[str, ...]] = cursor.fetchall()
     cursor.close()
 
     if len(data) == 0:
@@ -254,7 +302,7 @@ def user_has_downvoted(db: Any, comment_id: int, user_id: int) -> bool:
     user_id: ID of the user that possibly liked that comment
     """
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     vote
@@ -264,7 +312,7 @@ def user_has_downvoted(db: Any, comment_id: int, user_id: int) -> bool:
                 WHERE
                     c.comment_id = %s AND v.user_id = %s
                 """, (comment_id, user_id))
-    data = cursor.fetchall()
+    data: List[Tuple[str, ...]] = cursor.fetchall()
     cursor.close()
 
     if len(data) == 0:
@@ -288,7 +336,7 @@ def votes_per_comment(db: Any, comment_id: int, option: int = 1) -> int:
     option: 0 applies the filter over the Down votes while 1 applies that filter over the Up votes.
     """
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute("""
                 SELECT
                     COUNT(v.vote)
@@ -302,7 +350,7 @@ def votes_per_comment(db: Any, comment_id: int, option: int = 1) -> int:
                 HAVING
                     v.vote = %s
                 """, (comment_id, "UP" if option == 1 else "DOWN"))
-    data = cursor.fetchall()
+    data: List[Tuple[int, ...]] = cursor.fetchall()
     cursor.close()
     if len(data) == 0:
         return 0
@@ -326,9 +374,9 @@ def avg_measure(db: Any, user_id: int, option: int = 0) -> None | str:
     if option not in (0, 1):
         raise ValueError("You can only implement an option that is either 0 or 1, nothing else!")
 
-    victim = "imdbRating" if option == 0 else "runtime"
+    victim: str = "imdbRating" if option == 0 else "runtime"
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute(f"""
                 SELECT
                     AVG({victim})
@@ -337,7 +385,7 @@ def avg_measure(db: Any, user_id: int, option: int = 0) -> None | str:
                 WHERE
                     user_id = {user_id}
                 """) #There is no risk of SQL injection because the user_id is created by the MySQL and victim variable is defined by the code.
-    data = cursor.fetchall()
+    data: List[Tuple[float, ...]] = cursor.fetchall()
     cursor.close()
     
     if len(data) == 0:
@@ -363,9 +411,9 @@ def best_something(db: Any, user_id: int, option: int = 0) -> None | Dict[str, f
     if option not in (0, 1):
         raise ValueError("You can only implement an option that is either 0 or 1, nothing else!")
     
-    to_be_compared = "runtime" if option == 0 else "imdbRating"
+    to_be_compared: str = "runtime" if option == 0 else "imdbRating"
 
-    cursor = db.cursor()
+    cursor: Any = db.cursor()
     cursor.execute(
                 f"""
                 SELECT
@@ -375,7 +423,7 @@ def best_something(db: Any, user_id: int, option: int = 0) -> None | Dict[str, f
                 WHERE
                     user_id = {user_id} AND {to_be_compared} = (SELECT MAX({to_be_compared}) FROM movie_info WHERE user_id = {user_id})
                 """)
-    data = cursor.fetchall()
+    data: List[Tuple[str, int | float]] = cursor.fetchall()
     cursor.close()
     
     if not bool(data):
@@ -406,13 +454,13 @@ def get_movies_by_year(db: Any, user_id: int) -> Dict[str, str | int] | None:
                     ORDER BY
                         YEAR(release_date)
                     """, (user_id,))
-    dataset: List[Tuple[int, Any]] = cursor.fetchall()
+    dataset: List[Tuple[float, int, int]] = cursor.fetchall()
     cursor.close()
 
     if not bool(dataset):
         return None
 
-    organized_data: List[Dict[str, int]] = [{"Year" : int(dataset[i][1]), "Avg_score" : dataset[i][0], "Quantity": dataset[i][2]} for i in range(len(dataset))]
+    organized_data: List[Dict[str, int | float]] = [{"Year" : int(dataset[i][1]), "Avg_score" : dataset[i][0], "Quantity": dataset[i][2]} for i in range(len(dataset))]
     
     return organized_data
 

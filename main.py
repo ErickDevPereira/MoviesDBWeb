@@ -14,7 +14,7 @@ blueprint = make_google_blueprint(
     client_secret = client_secret
 )
 
-app = Flask(__name__)
+app: Flask = Flask(__name__)
 app.config["SECRET_KEY"] = urandom(32).hex() #hex code with 256bits
 app.register_blueprint(blueprint, url_prefix = '/login')
 

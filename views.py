@@ -1,5 +1,5 @@
 from main import app
-from flask import render_template, redirect, url_for, session, flash, get_flashed_messages
+from flask import render_template, redirect, url_for, session, flash, get_flashed_messages, Response
 from forms import *
 import db.conn as conn
 import db.DML as dml
@@ -12,6 +12,7 @@ from data_handling import get_data_by_title, get_title_by_imdb_from_api, score_h
 import mysql.connector as MySQL
 import os
 import math
+from typing import Dict, Sequence, Tuple, List, Any
 
 def login_required(function):
     """
@@ -27,30 +28,30 @@ def login_required(function):
     return wrapper
 
 @app.route('/sucess')
-def success():
+def success() -> str:
     """
     Definition of the endpoint that will allow us to access a success page.
     This page will be accessed after a succesfull registration.
     """
     if 'password' in session:
-        info = {'username': session['username'], 'email': session['email'], 'password': session['password']}
-        signal = 'Google'
+        info: Dict[str, int | str] = {'username': session['username'], 'email': session['email'], 'password': session['password']}
+        signal: str = 'Google'
     else:
-        info = {'username': session['username'], 'email': session['email'], 'phone' : session['phone']}
-        signal = 'Regular'
+        info: Dict[str, str] = {'username': session['username'], 'email': session['email'], 'phone' : session['phone']}
+        signal: str = 'Regular'
     session.clear()
     return render_template('success.html', signal = signal, info = info)
 
 @app.route('/login', methods = ['GET', 'POST'])
-def login():
+def login() -> str | Response:
     """
     Definition of the endpoint that will deal with the login page.
     """
     session['pre_home'] = True
-    msgs = get_flashed_messages()
-    form = LoginForm()
+    msgs: List[str] | List[Tuple[str, str]] = get_flashed_messages()
+    form: LoginForm = LoginForm()
     if form.validate_on_submit():
-        DB = conn.my_connection()
+        DB: Any = conn.my_connection()
         if dql.validate_user(DB, form.username.data, form.password.data):
             session['user_id'] = dql.get_id(DB, form.username.data) #Catches the id of the user that logged into the system.
             DB.close()
@@ -59,23 +60,23 @@ def login():
             flash("This user doesn't exist or the password is wrong!")
             DB.close()
             return redirect(url_for('login'))
-    fields = [form.username.errors, form.password.errors]
+    fields: List[Sequence[str]] = [form.username.errors, form.password.errors]
     return render_template('login.html', form = form, fields = fields, msgs = msgs)
 
 @app.route('/register', methods = ['GET', 'POST'])
-def register():
+def register() -> str | Response:
     """
     Definition of the endpoint that will deal with the registration page.
     """
     session['pre_home'] = True
-    msgs = get_flashed_messages()
-    form = RegisterForm()
+    msgs: list[str] | list[tuple[str, str]] = get_flashed_messages()
+    form: RegisterForm = RegisterForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        phone = form.phone.data
-        email = form.email.data
-        DB = conn.my_connection()
+        username: str | None = form.username.data
+        password: str | None = form.password.data
+        phone: str | None = form.phone.data
+        email: str | None = form.email.data
+        DB: Any = conn.my_connection()
         if not dql.check_if_user_exists(DB, username):
             session['username'] = username
             session['email'] = email
@@ -87,29 +88,29 @@ def register():
             DB.close()
             return redirect(url_for('register'))
         return redirect(url_for('success'))
-    fields = [form.username.errors, form.password.errors, form.conf_password.errors, form.email.errors, form.phone.errors]
+    fields: List[Sequence[str]] = [form.username.errors, form.password.errors, form.conf_password.errors, form.email.errors, form.phone.errors]
     return render_template('register.html', form = form, fields = fields, msgs = msgs)
 
 @app.route('/home/<user_name>', methods = ['GET', 'POST'])
 @login_required #Only logged user can access this page.
-def home(user_name):
+def home(user_name: str) -> str:
     """
     Definition of the endpoint that will give access to the home page. This is 
     exclusive for each user.
     """
-    msg_response = get_flashed_messages()
+    msg_response: List[str] | List[Tuple[str, str]] = get_flashed_messages()
     session['pre_home'] = False
-    form = SearchMovieForm()
-    DB = conn.my_connection()
-    all_movies = dql.get_movies_by_user(DB, session['user_id'])
-    number_of_movies = len(all_movies)
-    information = dql.get_by_id(DB, session['user_id'])
+    form: SearchMovieForm = SearchMovieForm()
+    DB: Any = conn.my_connection()
+    all_movies: List[Dict[str, str | int | float | None]] = dql.get_movies_by_user(DB, session['user_id'])
+    number_of_movies: int = len(all_movies)
+    information: Dict[str, str] | None = dql.get_by_id(DB, session['user_id'])
     if form.validate_on_submit():
         session["movie"] = get_data_by_title(form.title.data)
-        searched_movie = session["movie"]
+        searched_movie: Dict[str, str | int | float | None] | None = session["movie"]
     else:
-        searched_movie = 'None'
-    stats_data = dict()
+        searched_movie: str = 'None'
+    stats_data: Dict[str, Any] = dict()
     session['show_movies'] = False #Will be False if the user has less than 5 movies
     if number_of_movies >= 5:
         session['show_movies'] = True #Will be True if the user has more than 5 movies
@@ -117,7 +118,7 @@ def home(user_name):
         stats_data['highest_runtime'] = dql.best_something(DB, user_id = session['user_id'], option = 0)
         stats_data['avg_imdb_rating'] = dql.avg_measure(DB, user_id = session['user_id'], option = 0)
         stats_data['avg_runtime'] = dql.avg_measure(DB, user_id = session['user_id'], option = 1)
-        contexts = [
+        contexts: List[Dict[str, float | List[float]]] = [
                     {"ceil" : 1.0, "sequence" : [0.5, 0.0, 0.0, 0.0, 0.0]},
                     {"ceil" : 2.0, "sequence" : [1.0, 0.0, 0.0, 0.0, 0.0]},
                     {"ceil" : 3.0, "sequence" : [1.0, 0.5, 0.0, 0.0, 0.0]},
@@ -131,34 +132,34 @@ def home(user_name):
                     ] #0 represents empty star, 0.5 represents half a star and 1 represents a complete star
         for context in contexts:
             if float(stats_data['avg_imdb_rating']) <= context["ceil"]:
-                num_sequence = context["sequence"]
-                trasnlated_sequence = translate(num_sequence)
+                num_sequence: Dict[str, float | List[float]] = context["sequence"]
+                trasnlated_sequence: List[str] = translate(num_sequence)
                 stats_data["stars"] = trasnlated_sequence
                 break
-        users_dir = f'static/users'
+        users_dir: str = f'static/users'
         if not os.path.exists(users_dir):
             os.mkdir(users_dir)
-        user_dir = users_dir + f"/user_{session["user_id"]}"
+        user_dir: str = users_dir + f"/user_{session["user_id"]}"
         if not os.path.exists(user_dir):
             os.mkdir(user_dir)
         
         #Creating the histogram
-        scores = [all_movies[index]["imdbRating"] for index in range(len(all_movies))]
-        PATH_TO_SCORES_GRAPH = user_dir + '/' + f'score_{session['user_id']}'
+        scores: List[float] = [all_movies[index]["imdbRating"] for index in range(len(all_movies))]
+        PATH_TO_SCORES_GRAPH: str = user_dir + '/' + f'score_{session['user_id']}'
         score_histogram(score_set = scores, number_of_intervals = math.floor(len(scores)/2), path = PATH_TO_SCORES_GRAPH)
         session['path-to-scores-graph'] = "../" + PATH_TO_SCORES_GRAPH + '.png' #Relative path to the image from the home.html inside template
         
         #Creating the bar graph
-        data_grouped_by_year = dql.get_movies_by_year(DB, session['user_id'])
-        years = [data["Year"] for data in data_grouped_by_year]
-        Avg_score = [data["Avg_score"] for data in data_grouped_by_year]
-        PATH_TO_YEARS_GRAPH = user_dir + '/' + f'year_{session['user_id']}'
+        data_grouped_by_year: Dict[str, str | int] | None = dql.get_movies_by_year(DB, session['user_id'])
+        years: List[int] = [data["Year"] for data in data_grouped_by_year]
+        Avg_score: List[float] = [data["Avg_score"] for data in data_grouped_by_year]
+        PATH_TO_YEARS_GRAPH: str = user_dir + '/' + f'year_{session['user_id']}'
         year_bar(base = years, response = Avg_score, path = PATH_TO_YEARS_GRAPH)
         session['path-to-years-graph'] = '../' + PATH_TO_YEARS_GRAPH + '.png' #Relative path to the image from the home.html inside template
 
         #Creating the curve
-        quantity = [data['Quantity'] for data in data_grouped_by_year]
-        PATH_TO_CURVE_GRAPH = user_dir + "/" + f'quantity_{session['user_id']}'
+        quantity: List[int] = [data['Quantity'] for data in data_grouped_by_year]
+        PATH_TO_CURVE_GRAPH: str = user_dir + "/" + f'quantity_{session['user_id']}'
         year_curve(base = years, response = quantity, path = PATH_TO_CURVE_GRAPH)
         session['path-to-quanitty-graph'] = '../' + PATH_TO_CURVE_GRAPH + '.png' #Relative path to the image from the home.html inside template
 
@@ -173,20 +174,29 @@ def home(user_name):
                             stats_data = stats_data)
 
 @app.route('/logout')
-def logout():
+def logout() -> Response:
+    """
+    Explanation:
+    This view function will be responsible for redirecting the user to the outside, clearing the session.
+    """
     session.clear() #Cleaning the session of the user. Now the user will be out of the system.
     return redirect(url_for('login'))
 
 @app.route('/')
-def oauth_google():
+def oauth_google() -> Response:
+    """
+    This endpoint will be responsible for the syncronization between this software and google,
+    consuming data of the user from Google API. This endpoint will also redirect the user to the success area
+    once the operation is done or to the login area if that user already exists in the database.
+    """
     session['pre_home'] = True
     if google.authorized:
-        response = google.get('/oauth2/v2/userinfo')
-        data = response.json()
-        username = data['given_name'] + '_' + data['id']
+        response: Any = google.get('/oauth2/v2/userinfo')
+        data: Any = response.json()
+        username: str = data['given_name'] + '_' + data['id']
         DB = conn.my_connection()
         if not dql.check_if_user_exists(DB, username):
-            password = shuffle_str(data['id'])
+            password: str = shuffle_str(data['id'])
             dml.load_user(DB,
                         username = username,
                         password = generate_password_hash(password),
@@ -205,26 +215,33 @@ def oauth_google():
 
 @app.route('/movie/<title>', methods = ['GET', 'POST'])
 @login_required
-def movie(title):
-    complete_data = get_data_by_title(title)
-    DB = conn.my_connection()
-    information = dql.get_by_id(DB, session['user_id'])
-    username = f'nickname={information["username"]}'
+def movie(title: str) -> str:
+    """
+    Explanation:
+    This view function will process the backend related to the movie.html webpage.
+    
+    Parameters
+    title: title of the movie that will be shown into the movie.html
+    """
+    complete_data: Dict[str, str | int | float | None] | None = get_data_by_title(title)
+    DB: Any = conn.my_connection()
+    information: Dict[str, str] | None = dql.get_by_id(DB, session['user_id'])
+    username: str = f'nickname={information["username"]}'
     
     if complete_data is None:
         DB.close()
         return render_template('movie_not_found.html', title = title, information = information, username = username)
 
-    img = complete_data['Image']
-    user_has_movie = dql.user_has_movie(DB, user_id = session['user_id'], title = title)
-    imdb = complete_data['imdbID']
-    form = CommentForm()
+    img: Dict[str, str | int | float | None] = complete_data['Image']
+    user_has_movie: bool = dql.user_has_movie(DB, user_id = session['user_id'], title = title)
+    imdb: Dict[str, str | int | float | None] = complete_data['imdbID']
+    form: CommentForm = CommentForm()
 
     if form.validate_on_submit():
         dml.load_comment(DB, user_id = session['user_id'], text = form.comment.data, imdb_id = imdb)
         form.comment.data = ''
     
-    comments = dql.get_comment_by_imdb(DB, imdb_id = imdb)
+    comments: List[Dict[str, str]] = dql.get_comment_by_imdb(DB, imdb_id = imdb)
 
     for comment in comments:
         comment['up'] = dql.votes_per_comment(DB, comment_id = comment['comment_id'], option = 1)
@@ -245,11 +262,15 @@ def movie(title):
 
 @app.route('/movie/add_a_movie')
 @login_required
-def add_movie():
-    DB = conn.my_connection()
+def add_movie() -> Response:
+    """
+    Explanation:
+    This endpoint will be responsible for the proccess of adding a movie to the database.
+    """
+    DB: Any = conn.my_connection()
     try:
-        username = dql.get_by_id(DB, session['user_id'])['username']
-        my_movie = session['movie']
+        username: str | None = dql.get_by_id(DB, session['user_id'])['username']
+        my_movie: Dict[str, str | int | float | None] | None = session['movie']
         dml.load_movie(DB,
                     imdb_id= my_movie['imdbID'],
                     user_id = session['user_id'],
@@ -277,20 +298,39 @@ def add_movie():
 
 @app.route('/del_movie/<movie_imdb>')
 @login_required
-def del_movie(movie_imdb):
-    DB = conn.my_connection()
-    title = dql.get_title_by_imdb(DB, movie_imdb)
+def del_movie(movie_imdb: str) -> Response:
+    """
+    Explanation:
+    this endpoint will be responsible by deleting a movie from the movie's dataset
+    of a given user.
+
+    Parameters:
+    movie_imdb: imdb code for a movie (it will be automatically filled)
+    """
+    DB: Any = conn.my_connection()
+    title: str | None = dql.get_title_by_imdb(DB, movie_imdb)
     flash(f"\"{title}\" was removed successfully!")
     flash(str(Status.DELETION.value))
-    username = dql.get_by_id(DB, session['user_id'])['username']
+    username: str = dql.get_by_id(DB, session['user_id'])['username']
     dml.remove_movie(DB, user_id = session['user_id'], imdb_id = movie_imdb)
     DB.close()
     return redirect(url_for('home', user_name = f'nickname={username}'))
 
 @app.route('/up_vote/<comment_id>')
 @login_required
-def up_vote(comment_id):
-    DB = conn.my_connection()
+def up_vote(comment_id: str) -> Response:
+    """
+    Explanation:
+    this endpoint will be called when the user clicks at up vote. When this function is called,
+    it will delete, update or add something into the votes table. If the user wanted to take that
+    up vote, it will be deleted from the database; if he/she switched from down vote to up vote, an update
+    will be done over that record such that the vote type is UP; if he/she votted at that comment for the
+    first time, a new record will be created with UP vote.
+
+    Parameters:
+    comment_id: id of the comment that was up voted.
+    """
+    DB: Any = conn.my_connection()
     try:
         dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.LIKE.value)
     except MySQL.errors.IntegrityError:
@@ -299,14 +339,25 @@ def up_vote(comment_id):
         else:
             dml.delete_vote(DB, comment_id = comment_id, user_id = session['user_id'])
     finally:
-        title = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
+        title: str = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
         DB.close()
         return redirect(url_for('movie', title = title))
 
 @app.route('/down_vote/<comment_id>')
 @login_required
-def down_vote(comment_id):
-    DB = conn.my_connection()
+def down_vote(comment_id: str) -> Response:
+    """
+    Explanation:
+    this endpoint will be called when the user clicks at down vote. When this function is called,
+    it will delete, update or add something into the votes table. If the user wanted to take that
+    down vote, it will be deleted from the database; if he/she switched from up vote to down vote, an update
+    will be done over that record such that the vote type is DOWN; if he/she votted at that comment for the
+    first time, a new record will be created with DOWN vote.
+
+    Parameters:
+    comment_id: id of the comment that was down voted.
+    """
+    DB: Any = conn.my_connection()
     try:
         dml.load_vote_on_db(DB, user_id = session['user_id'], comment_id = comment_id, vote = Vote.UNLIKE.value)
     except MySQL.errors.IntegrityError:
@@ -315,6 +366,6 @@ def down_vote(comment_id):
         else:
             dml.delete_vote(DB, comment_id = comment_id, user_id = session['user_id'])
     finally:
-        title = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
+        title: str = get_title_by_imdb_from_api(dql.get_imdb_by_comment(DB, comment_id))
         DB.close()
         return redirect(url_for('movie', title = title))

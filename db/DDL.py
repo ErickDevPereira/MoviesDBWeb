@@ -1,7 +1,19 @@
 import mysql.connector as conn
-from typing import Any
+from typing import Any, List
 
 def run_database(password: str, username: str = 'root') -> None:
+
+    """
+    Explanation:
+    This function will create the database 'moviedb' in MySQL if it doesn't exist,
+    create the tables if they don't exist and create the indexes if they don't exist.
+    If a specific table or index don't exist while the others are over the database, then
+    the tables and indexes that are lacking on the application will be created.
+
+    Parameters:
+    password: password to your MySQL server.
+    username: username to your MySQL server (the name is probably 'root')
+    """
 
     db: Any = conn.connect(
         user = username,
@@ -9,7 +21,7 @@ def run_database(password: str, username: str = 'root') -> None:
         host = 'localhost'
     )
     cursor: Any = db.cursor()
-    cursor.execute('CREATE DATABASE if not exists moviesdb')
+    cursor.execute('CREATE DATABASE if not exists moviesdb') #Creating the database
     cursor.close()
     db.close()
     db: Any = conn.connect(
@@ -17,7 +29,7 @@ def run_database(password: str, username: str = 'root') -> None:
         password = password,
         host = 'localhost',
         database = 'moviesdb'
-    )
+    ) #Creating a connection to the database moviesdb
     cursor: Any = db.cursor()
     cursor.execute("""
                     CREATE TABLE if not exists users (
@@ -38,14 +50,14 @@ def run_database(password: str, username: str = 'root') -> None:
                 CREATE TABLE if not exists movie_info (
                     movie_id INT PRIMARY KEY AUTO_INCREMENT,
                     user_id INT NOT NULL,
-                    imdb_id VARCHAR(20),
-                    title VARCHAR(255),
+                    imdb_id VARCHAR(20) NOT NULL,
+                    title VARCHAR(255) NOT NULL,
                     type VARCHAR(255),
                     release_date DATE NOT NULL,
                     runtime INT,
                     description VARCHAR(5000),
                     genre VARCHAR(255),
-                    imdbRating DECIMAL(3,1),
+                    imdbRating DECIMAL(3,1) NOT NULL,
                     FOREIGN KEY (user_id) REFERENCES Users (user_id),
                     UNIQUE (user_id, imdb_id)
                 )
@@ -87,16 +99,16 @@ def run_database(password: str, username: str = 'root') -> None:
                 )
                     """) #User_id is the user that voted and comment_id is the id of the comment at which that vote was applied.
     cursor.close()
-    SQLs = [
+    SQLs: List[str] = [
             'CREATE INDEX ind1 ON users (username, password)',
             'CREATE INDEX ind2 ON movie_info (user_id, runtime)',
             'CREATE INDEX ind3 ON movie_info (user_id, imdbRating)',
             'CREATE INDEX ind4 ON movie_info (user_id, title)',
             'CREATE INDEX ind5 ON movie_info (imddb_id)'
             ] #These indexes will be responsible for speeding up somes queries
-    for sql in SQLs:
+    for sql in SQLs: #This loop will produce the indexes.
         try:
-            cursor = db.cursor()
+            cursor: Any = db.cursor()
             cursor.execute(sql)
             cursor.close()
         except conn.errors.ProgrammingError:

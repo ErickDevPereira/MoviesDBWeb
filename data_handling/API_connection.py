@@ -2,12 +2,16 @@ import requests
 from typing import Dict, Any
 
 def get_data_by_title(title: str) -> None | Dict[str, str | int | None | float]:
+    
     """
     This function receives a title of a movie. If the status of the request is different from 200 (like when
     the server of the API is off or when you're without internet) the return will be None; if the status is 200, but
     that movie wasn't found on the API database then the returned value will also be None; If the status is 200 and that 
     movie is found, then the return will be the data about the movie as a dictionary.
+    Parameter:
+    title: title of a movie as string.
     """
+
     def check_invalid_values(message: str) -> None | str:
         """
         This function receives a message as string and returns that message if it is not "N/A", but return None otherwise.
@@ -46,12 +50,20 @@ def get_data_by_title(title: str) -> None | Dict[str, str | int | None | float]:
 
 def get_title_by_imdb_from_api(imdb_id: str) -> None | str:
     
+    """
+    Explanation:
+    This function returns the title of a movie based on the imdb, so you
+    give the imdb ID of a movie and it retrieves the title of that movie.
+    Parameter:
+    imdb_id: imdb code as string for the movie.
+    """
+
     URL: str = 'http://www.omdbapi.com/'
     key: str = '118afbf0'
     response: requests.Response = requests.get(URL, params = {'apikey' : key, 'i' : imdb_id})
 
     if response.status_code == 200:
-        data = response.json()
+        data: Any = response.json()
         if data['Response'] == "True":
             if data['Title'] == "N/A":
                 return None
