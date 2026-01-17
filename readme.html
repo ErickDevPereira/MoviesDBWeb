@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+            color: white;
+            font-family: helvetica, sans-serif;
+        }
+
+        h1 {
+            font-size: 2.4em;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        body {
+            background-color: #030405;
+            padding: 30px;
+        }
+
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-indent: 30px;
+            line-height: 25px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-position: inside;
+        }
+
+        ol {
+            list-style-position: inside;
+        }
+
+        li {
+            padding-left: 30px;
+            line-height: 30px;
+        }
+
+        ul.inner_list {
+            padding-left: 30px;
+        }
+
+        img {
+            padding-top: 20px;
+            display: block;
+            margin: auto;
+            width: 720px;
+            padding-bottom: 20px;
+        }
+
+        p.img_title {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>MovieDB - A full-stack system built with Python</h1>
+    <hr>
+    <h2>Overview</h2>
+    <p>
+        This application is a full-stack system built with Python and Flask that manages movie metadata, user interactions and personalized analytics. It is focused on backend architecture, relational data modeling with pure SQL and user-driven workflows.
+    </p>
+    <p>
+        The application implements authentication, comments, reactions and user-specific statistics, emphasizing clarity, explicit contracts and maintainable design.
+    </p>
+    <hr>
+    <h2>Key Features</h2>
+    <ul>
+        <li>User authentication</li>
+        <li>OAuth2 integration with Google Cloud</li>
+        <li>Individual page for each movie</li>
+        <li>Movie search by title with direct navigation to the movie page</li>
+        <li>Comment system (users can create comments on movie pages)</li>
+        <li>Like and dislike system (users can react to comments)</li>
+        <li>User-specific statistics dashboard based on the user's movie list</li>
+        <li>Dynamic generation of charts per user</li>
+        <li>Users can add and remove movies at any time</li>
+    </ul>
+    <hr>
+    <h2>Tech Stack</h2>
+    <ul>
+        <li><strong>Python: </strong>primary programming language</li>
+        <li><strong>Flask:</strong> backend web framework</li>
+        <li><strong>matplotlib:</strong> server-side chart generation</li>
+        <li><strong>MySQL:</strong> relational database management system</li>
+        <li><strong>mysql-python-connector:</strong> database driver for MySQL</li>
+        <li><strong>HTML, CSS and JS:</strong> frontend technologies</li>
+        <li><strong>JINJA2:</strong> server-side templating engine</li>
+    </ul>
+    <hr>
+    <h2>Technical notes</h2>
+    <ul>
+        <li>No ORM is used; all database interactions are implemented using explicit SQL queries</li>
+        <li>Passwords are securely hashed using Werkzeug</li>
+        <li>Statistics are built from real aggregated data, not mocked or hard-coded</li>
+        <li>The application applies common security best practices, including:</li>
+        <ul class = 'inner_list'>
+            <li><strong>SQL Injection prevention:</strong> all queries are properly parameterized</li>
+            <li><strong>CSRF:</strong> the features of flask won't allow such attack</li>
+            <li><strong>brute force attacks:</strong> if someone is able to access the database, brute force attacks over the passwords won't be enough to take the passwords due to werkzeug encryptation.</li>
+        </ul>
+    </ul>
+    <br>
+    <p>Database schema for this project</p>
+    <img src = 'src/readme_imgs/db_schema.png'>
+    <hr>
+    <h2>How to use</h2>
+    <p>You can run a server for this application by following the steps:</p>
+    <ol>
+        <li>Install MySQL and create a user with a password.</li>
+        <li>Create and activate a Python virtual environment.</li>
+        <li>From the project root directory, run: pip install -r requirements.txt</li>
+        <li>Run the main.py script and provide your MySQL credentials when prompted</li>
+        <li>Access the application at: /login.</li>
+    </ol>
+    <br>
+    <p>Note: Database schema creation is automated on first run</p>
+    <hr>
+    <p>Here are some images of the project:</p>
+    <p class = 'img_title'>Page for a single movie</p>
+    <img src = 'src/readme_imgs/movie_page.png'>
+    <p class = 'img_title'>Home page</p>
+    <img src = 'src/readme_imgs/home1.png'>
+    <p class = 'img_title'>Other part of the home page</p>
+    <img src = 'src/readme_imgs/home2.png'>
+    <p class = 'img_title'>Page to register an account</p>
+    <img src = 'src/readme_imgs/register.png'>
+</body>
+</html>

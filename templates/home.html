@@ -37,7 +37,7 @@
                     {{ form.title(class = 'search_input input_box_style') }}{{ form.submit(class = 'search_but') }}
                     </form>
                     <div class="alert alert-warning alert-dismissible fade show" role="alert" style = 'background-color: rgb(162, 255, 209); color: black; border-radius: 10px 10px 10px 10px; border-color: green;'>
-                        <strong style = 'font-size: 1.2em; color: black;'>&#127812; Good to know: </strong> You can write the title of the movie the way you want, so you don't need to be precise about it because the API will do the best to find it to you.
+                        <strong style = 'font-size: 1.2em; color: black;'>&#127812; Good to know: </strong> You can write the title of the movie the way you like, so you don't need to be precise about it because the API will do the best to find it to you.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     {% for err in form.title.errors %}
@@ -111,7 +111,7 @@
                                         <div style = 'background-image: url("{{ session["path-to-scores-graph"] }}"); background-position : center; background-size: 90% 90%; background-repeat: no-repeat; width: 450px; height: 350px;'>
                                         </div>
                                         <p>
-                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This histogram shows the quantity of movies for each score's interval.
+                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This histogram shows the number of movies for each range of scores.
                                         </p>
                                     </div>
                                 </td>
@@ -127,7 +127,7 @@
                                         <div style = 'background-image: url("{{ session["path-to-quanitty-graph"] }}");' class = 'graph_edit'>
                                         </div>
                                         <p style = 'text-align: left;'>
-                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This graph shows the quantity of of movies for each year. Each star represents a movie that was registered by the user, so it is a point in the curve.
+                                            <strong style = 'font-size: 1.5em;'>&#127760; Graph explantion:</strong><br>This graph shows the quantity of movies for each year. Each star represents a movie that was registered by the user, so it is a point in the curve.
                                         </p>
                                     </div>
                                 </td>
