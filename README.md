@@ -48,7 +48,7 @@
         <ul style = 'list-style-position: inside; padding-left: 30px;'>
             <li style = ' padding-left: 30px; line-height: 30px;'><strong>SQL Injection prevention:</strong> all queries are properly parameterized</li>
             <li style = ' padding-left: 30px; line-height: 30px;'><strong>CSRF:</strong> the features of flask won't allow such attack</li>
-            <li style = ' padding-left: 30px; line-height: 30px;'><strong>brute force attacks:</strong> if someone is able to access the database, brute force attacks over the passwords won't be enough to take the passwords due to werkzeug encryptation.</li>
+            <li style = ' padding-left: 30px; line-height: 30px;'><strong>brute force attacks:</strong> if someone is able to access the database, brute force attacks over the passwords won't be enough to take the passwords due to werkzeug encryption.</li>
         </ul>
     </ul>
     <br>
@@ -60,14 +60,14 @@
     <ol>
         <li>Install MySQL and create a user with a password.</li>
         <li>Create and activate a Python virtual environment.</li>
-        <li>From the project root directory, run: pip install -r requirements.txt</li>
+        <li>From the project root directory, run: <code>pip install -r requirements.txt</code></li>
         <li>Run the main.py script and provide your MySQL credentials when prompted</li>
         <li>Access the application at: /login.</li>
     </ol>
     <br>
     <p style = 'text-indent: 30px; line-height: 25px; margin-bottom: 10px;'>Note: Database schema creation is automated on first run</p>
     <hr style = 'margin-top: 10px; margin-bottom: 10px;'>
-    <h2 style = 'font-size: 2em; margin-bottom: 20px;'>Prints</h2>
+    <h2 style = 'font-size: 2em; margin-bottom: 20px;'>Screenshots</h2>
     <p style = 'text-indent: 30px; line-height: 25px; margin-bottom: 10px;'>Here are some images of the project:</p>
     <p style = 'text-indent: 30px; line-height: 25px; margin-bottom: 10px; text-align: center;'>Page for a single movie</p>
     <img src = 'src/readme_imgs/movie_page.png' style = 'padding-top: 20px; display: block; margin: auto; width: 720px; padding-bottom: 20px;'>
