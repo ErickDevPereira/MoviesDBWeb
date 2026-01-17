@@ -33,7 +33,7 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor: Any = db.cursor()
     cursor.execute("""
                     CREATE TABLE if not exists users (
-                        user_id INT PRIMARY KEY AUTO_INCREMENT,
+                        user_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                         username VARCHAR(64) NOT NULL UNIQUE,
                         password VARCHAR(1024) NOT NULL,
                         email VARCHAR(256) NOT NULL,
@@ -48,13 +48,13 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor: Any = db.cursor()
     cursor.execute("""
                 CREATE TABLE if not exists movie_info (
-                    movie_id INT PRIMARY KEY AUTO_INCREMENT,
-                    user_id INT NOT NULL,
+                    movie_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT UNSIGNED NOT NULL,
                     imdb_id VARCHAR(20) NOT NULL,
                     title VARCHAR(255) NOT NULL,
                     type VARCHAR(255),
                     release_date DATE NOT NULL,
-                    runtime INT,
+                    runtime INT UNSIGNED,
                     description VARCHAR(5000),
                     genre VARCHAR(255),
                     imdbRating DECIMAL(3,1) NOT NULL,
@@ -66,7 +66,7 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor: Any = db.cursor()
     cursor.execute("""
                 CREATE TABLE if not exists movie_people (
-                    movie_id INT NOT NULL,
+                    movie_id INT UNSIGNED NOT NULL,
                     actors VARCHAR(128),
                     director VARCHAR(128),
                     writer VARCHAR(128),
@@ -77,8 +77,8 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor: Any = db.cursor()
     cursor.execute("""
                 CREATE TABLE if not exists comments (
-                    comment_id INT PRIMARY KEY AUTO_INCREMENT,
-                    user_id INT NOT NULL,
+                    comment_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT UNSIGNED NOT NULL,
                     text VARCHAR(1500) NOT NULL,
                     imdb_id VARCHAR(20),
                     date DATETIME DEFAULT NOW(),
@@ -89,9 +89,9 @@ def run_database(password: str, username: str = 'root') -> None:
     cursor: Any = db.cursor()
     cursor.execute("""
                 CREATE TABLE if not exists votes (
-                    vote_id INT PRIMARY KEY AUTO_INCREMENT,
-                    user_id INT NOT NULL,
-                    comment_id INT NOT NULL,
+                    vote_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT UNSIGNED NOT NULL,
+                    comment_id INT UNSIGNED NOT NULL,
                     vote ENUM("UP", "DOWN") NOT NULL,
                     FOREIGN KEY (user_id) REFERENCES Users (user_id),
                     FOREIGN KEY (comment_id) REFERENCES Comments (comment_id),
